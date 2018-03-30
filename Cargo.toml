@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["Vlad Hashimoto <ukrgametactics@ex.ua>"]
 
 [lib]
-crate-type = ["staticlib"]
+crate-type = ["cdylib"]
 
 [dependencies]
 proton-core = {path = "./proton-core"}
