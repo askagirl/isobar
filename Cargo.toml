@@ -3,5 +3,11 @@ name = "proton"
 version = "0.1.0"
 authors = ["Vlad Hashimoto <ukrgametactics@ex.ua>"]
 
+[lib]
+crate-type = ["staticlib"]
+
 [dependencies]
-rand = "0.3"
+proton-core = {path = "./proton-core"}
+napi = {path = "./napi"}
+
+[workspace]
