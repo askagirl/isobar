@@ -35,8 +35,10 @@ This is mostly for our use right now and might not make a ton of sense just yet 
 * [x] Refactor N-API bindings to use marker types in N-API values.
 * [x] napi: Async promise resolution
 * [ ] napi: Error handling
-* [ ] Implement `BroadcastLatest`, a single-producer/multi-consumer broadcast channel that implements the `futures::Stream` trait and returns the most recently assigned value when polled. This will be used to propagate buffer and editor changes to observers.
-* [ ] Implement a read-only editor view in Electron using canvas. How fast can we get it on screen? How fast can we scroll it?
+* [ ] Implement a read-only editor view with hard-coded contents in Electron using canvas.
+  * [ ] Figure out how we can talk to stores implemented in Rust on a different thread from React components written in JS.
+  * [ ] Explore rendering to a canvas.
+  * [ ] How fast can we get it on screen? How fast can we scroll it?
 * [ ] Implement syntax highlighting with tree-sitter and a simple custom theming system. How fast can we load and scroll now?
 * [ ] Add selections/cursors and multi-cursor editing. How many cursors can we comfortably type with?
 * [ ] Create a server process to load and save buffers and incrementally persist their edit histories to a database.
