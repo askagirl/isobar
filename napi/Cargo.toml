@@ -5,4 +5,3 @@ authors = ["Vlad Hashimoto <ukrgametactics@ex.ua>"]
 
 [dependencies]
 napi-sys = {path = "./napi-sys"}
-typenum = "1.9"
