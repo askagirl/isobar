@@ -1,5 +1,5 @@
 [package]
-name = "proton"
+name = "isobar"
 version = "0.1.0"
 authors = ["Vlad Hashimoto <ukrgametactics@ex.ua>"]
 
@@ -7,7 +7,7 @@ authors = ["Vlad Hashimoto <ukrgametactics@ex.ua>"]
 crate-type = ["cdylib"]
 
 [dependencies]
-proton-core = {path = "./proton-core"}
+isobar-core = {path = "./isobar-core"}
 collider = {path = "../collider"}
 
 [workspace]

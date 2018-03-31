@@ -1,4 +1,4 @@
-# Proton
+# Isobar
 
 This is an experimental in using the fundamental concepts of the Teletype CRDT as Atom's core text-strong data structure. It's implemented in Rust.
 
