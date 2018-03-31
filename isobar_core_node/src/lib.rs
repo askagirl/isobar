@@ -1,11 +1,11 @@
 #[macro_use]
-extern crate collider;
+extern crate covalent;
 extern crate isobar_core;
 
 use std::rc::Rc;
 use std::cell::RefCell;
 use isobar_core::{Buffer, ReplicaId, Editor};
-use collider::{sys, Result, Env, Property, Value, Function, Object};
+use covalent::{sys, Result, Env, Property, Value, Function, Object};
 
 register_module!(isobar, init);
 

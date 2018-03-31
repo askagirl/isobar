@@ -8,4 +8,4 @@ crate-type = ["cdylib"]
 
 [dependencies]
 isobar_core = {path = "../isobar_core"}
-collider = {path = "../../collider"}
+covalent = {path = "../../covalent"}
