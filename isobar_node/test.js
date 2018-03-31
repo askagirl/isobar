@@ -1,4 +1,4 @@
-const {TextBuffer, TextEditor} = require('./target/debug/isobar.node')
+const {TextBuffer, TextEditor} = require('./target/debug/isobar_node')
 
 const buffer = new TextBuffer(1)
 buffer.splice(0, 0, 'Hello, world!')

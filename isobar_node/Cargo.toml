@@ -1,5 +1,5 @@
 [package]
-name = "isobar"
+name = "isobar_node"
 version = "0.1.0"
 authors = ["Vlad Hashimoto <ukrgametactics@ex.ua>"]
 
@@ -8,4 +8,4 @@ crate-type = ["cdylib"]
 
 [dependencies]
 isobar_core = {path = "../isobar_core"}
-covalent = {path = "../../covalent"}
+napi = {path = "../napi"}
