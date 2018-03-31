@@ -1,5 +1,5 @@
 [package]
-name = "isobar-core"
+name = "isobar_core"
 version = "0.1.0"
 authors = ["Vlad Hashimoto <ukrgametactics@ex.ua>"]
 
