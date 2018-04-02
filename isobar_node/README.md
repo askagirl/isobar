@@ -4,6 +4,6 @@ This subproject provides an interface to the `isobar_core` library from JavaScri
 
 ## Building
 
-Because the target library looks up symbols from Node dynamically, it cannot be build with cargo directly without additional linker flags. See `scripts/build.js` for details.
+This project depends on the [`napi`](https://github.com/siberianmh/napi) crate, which provides a safe interface to Node's N-API. It depends on the tandem Node.js pacakge `napi` to provide a build harness. Running `npm build` will invoke that build hardness which sets up the environment variables and linker falgs for Cargo.
 
-This project depends on the [`napi`](https://github.com/siberianmh/napi) crate, (which provides a safe interface to Node's N-API. Currently, `covalent` is expected to be present as a sibling of the `napi` repository until I take the time to set it up more correctly.
+Currently, `napi` is expected to be present as a sibling of the `isobar` repository until I take the time to set it up more correctly.
