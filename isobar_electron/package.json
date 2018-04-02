@@ -3,15 +3,19 @@
   "version": "0.1.0",
   "main": "./lib/main_process/main.js",
   "license": "MIT",
+  "scripts": {
+    "start": "node_modules/.bin/electron ."
+  },
   "dependencies": {
+    "isobar": "../isobar_node",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "styletron-client": "^3.0.4",
-    "styletron-react": "^3.0.4",
-    "isobar": "../isobar_node"
+    "styletron-react": "^3.0.4"
   },
   "devDependencies": {
+    "electron": "^2.0.0-beta.1",
     "prettier": "^1.10.2"
   }
 }
