@@ -9,6 +9,7 @@ const $ = React.createElement;
 class TextEditorContainer extends React.Component {
   constructor(props) {
     super(props);
+    this.onWheel = this.onWheel.bind(this);
 
     const buffer = new isobar.TextBuffer(1);
     const editor = new isobar.TextEditor(buffer, this.editorChanged.bind(this));
@@ -33,10 +34,14 @@ class TextEditorContainer extends React.Component {
     this.componentDidResize({
       width: element.offsetWidth,
       height: element.offsetHeight
-    })
+    });
+
+    element.addEventListener('wheel', this.onWheel, {passive: true});
   }
 
   componentWillUnmount() {
+    const element = ReactDOM.findDOMNode(this);
+    element.removeEventListener('whell', this.onWheel, {passive: true});
     this.state.editor.destroy();
     this.state.resizeObserver.disconnect();
   }
@@ -68,12 +73,13 @@ class TextEditorContainer extends React.Component {
       scrollTop,
       width,
       height,
-      frameState: this.computeFrameState(),
-      onWhell: event => {
-        this.setState({
-          scrollTop: Math.max(0, this.state.scrollTop + event.deltaY)
-        });
-      }
+      frameState: this.computeFrameState()
+    });
+  }
+
+  onWheel (event) {
+    this.setState({
+      scrollTop: Math.max(0, this.state.scrollTop + event.deltaY)
     });
   }
 }
