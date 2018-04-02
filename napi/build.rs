@@ -1,6 +1,7 @@
 extern crate bindgen;
 extern crate cc;
 extern crate glob;
+use std::process::Command;
 
 use glob::glob;
 use std::env;
@@ -29,6 +30,10 @@ fn main() {
         .expect("Unable to generate napi bindings")
         .write_to_file("src/sys/bindings.rs")
         .expect("Unable to write napi bindings");
+
+    Command::new("rustup").args(&["run", "nightly", "rustfmt", "src/sys/bindings.rs"])
+        .status()
+        .expect("Unable to format napi bindings");
 
     cc::Build::new()
         .cpp(true)
