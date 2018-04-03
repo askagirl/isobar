@@ -2,6 +2,7 @@
 name = "isobar_core"
 version = "0.1.0"
 authors = ["Vlad Hashimoto <ukrgametactics@ex.ua>"]
+license = "MIT"
 
 [dependencies]
 rand = "0.3"
