@@ -60,7 +60,7 @@ impl<T: Clone> Stream for NotifyCellObserver<T> {
     type Error = ();
 
     fn poll(&mut self) -> Poll<Option<Self::Item>, Self::Error> {
-        let mut inner = self.inner().unwrap();
+        let mut inner = self.inner.lock().unwrap();
 
         if let Some(value) = inner.value.as_ref().cloned() {
             if self.last_polled_at < inner.last_written_at  {
@@ -116,7 +116,7 @@ mod tests {
         for value in generated_values_iter {
             cell.set(value);
         }
-        drop(cell); // Droppingthe cell terminates the stream.
+        drop(cell); // Dropping the cell terminates the stream.
 
         for future in cpu_futures {
             let observed_values = future.wait().unwrap();
