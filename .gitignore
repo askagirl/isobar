@@ -4,3 +4,5 @@
 **/.DS_Store
 napi/src/sys/bindings.rs
 isobar_core/Cargo.lock
+Icon*
+.tags*
