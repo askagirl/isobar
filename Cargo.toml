@@ -4,3 +4,4 @@ members = [
     "isobar_core",
     "isobar_node",
 ]
+exclude = ["napi/test_module"]
