@@ -65,6 +65,7 @@ const UNIT_QUAD_VERTICES = new Float32Array([1, 1, 1, 0, 0, 0, 0, 1]);
 const UNIT_QUAD_ELEMENT_INDICES = new Uint8Array([0, 1, 3, 1, 2, 3]);
 const MAX_GLYPH_INSTANCES = 1 << 16;
 const GLYPH_INSTANCE_SIZE_IN_BYTES = 12 * Float32Array.BYTES_PER_ELEMENT;
+const SOLID_INSTANCE_SIZE_IN_BYTES = 8 * Float32Array.BYTES_PER_ELEMENT;
 const SUBPIXEL_DIVISOR = 4;
 
 class Renderer {
@@ -86,6 +87,14 @@ class Renderer {
       shaders.textBlendPass2Fragment,
       this.gl.FRAGMENT_SHADER
     );
+    const solidVertexShader = this.createShader(
+      shaders.solidVertex,
+      this.gl.VERTEX_SHADER
+    );
+    const solidFragmentShader = this.createShader(
+      shaders.solidFragment,
+      this.gl.FRAGMENT_SHADER
+    );
 
     this.textBlendPass1Program = this.createProgram(
       textBlendVertexShader,
@@ -95,10 +104,14 @@ class Renderer {
       textBlendVertexShader,
       textBlendPass2FragmentShader
     );
-
+    this.solidProgram = this.createProgram(
+      solidVertexShader,
+      solidFragmentShader
+    );
 
     this.createBuffers();
-    this.textBendVAO = this.createTextBlendVAO();
+    this.textBlendVAO = this.createTextBlendVAO();
+    this.solidVAO = this.createSolidVAO();
   }
 
   createBuffers() {
@@ -123,6 +136,9 @@ class Renderer {
 
     this.glyphInstances = new Float32Array(MAX_GLYPH_INSTANCES);
     this.glyphInstancesBuffer = this.gl.createBuffer();
+
+    this.solidInstances = new Float32Array(MAX_GLYPH_INSTANCES);
+    this.solidInstancesBuffer = this.gl.createBuffer();
   }
 
   createTextBlendVAO() {
@@ -132,7 +148,7 @@ class Renderer {
     this.gl.bindBuffer(
       this.gl.ELEMENT_ARRAY_BUFFER,
       this.unitQuadElementIndicesBuffer
-    )
+    );
 
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.unitQuadVerticesBuffer);
     this.gl.enableVertexAttribArray(shaders.textBlendAttributes.unitQuadVertex);
@@ -205,7 +221,65 @@ class Renderer {
     return vao
   }
 
-  drawLines({ scrollTop, firstVisibleRow, lines}) {
+  createSolidVAO() {
+    const vao = this.gl.createVertexArray();
+    this.gl.bindVertexArray(vao);
+
+    this.gl.bindBuffer(
+      this.gl.ELEMENT_ARRAY_BUFFER,
+      this.unitQuadElementIndicesBuffer
+    );
+
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.unitQuadVerticesBuffer);
+    this.gl.enableVertexAttribArray(shaders.solidAttributes.unitQuadVertex);
+    this.gl.vertexAttribPointer(
+      shaders.solidAttributes.unitQuadVertex,
+      2,
+      this.gl.FLOAT,
+      false,
+      0,
+      0
+    );
+
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.solidInstancesBuffer);
+
+    this.gl.enableVertexAttribArray(shaders.solidAttributes.targetOrigin);
+    this.gl.vertexAttribPointer(
+      shaders.solidAttributes.targetOrigin,
+      2,
+      this.gl.FLOAT,
+      false,
+      GLYPH_INSTANCE_SIZE_IN_BYTES,
+      0
+    );
+    this.gl.vertexAttribDivisor(shaders.solidAttributes.targetOrigin, 1);
+
+    this.gl.enableVertexAttribArray(shaders.solidAttributes.targetSize);
+    this.gl.vertexAttribPointer(
+      shaders.solidAttributes.targetSize,
+      2,
+      this.gl.FLOAT,
+      false,
+      GLYPH_INSTANCE_SIZE_IN_BYTES,
+      2 * Float32Array.BYTES_PER_ELEMENT
+    );
+    this.gl.vertexAttribDivisor(shaders.solidAttributes.targetSize, 1);
+
+    this.gl.enableVertexAttribArray(shaders.solidAttributes.colorRGBA);
+    this.gl.vertexAttribPointer(
+      shaders.solidAttributes.colorRGBA,
+      4,
+      this.gl.FLOAT,
+      false,
+      GLYPH_INSTANCE_SIZE_IN_BYTES,
+      4 * Float32Array.BYTES_PER_ELEMENT
+    );
+    this.gl.vertexAttribDivisor(shaders.solidAttributes.colorRGBA, 1);
+
+    return vao
+  }
+
+  drawLines({ scrollTop, firstVisibleRow, lines }) {
     const { dpiScale } = this.style;
 
     const firstVisibleRowY = firstVisibleRow * this.style.computedLineHeight;
@@ -248,6 +322,7 @@ class Renderer {
 
     this.atlas.uploadTexture()
 
+    this.gl.bindVertexArray(this.textBlendVAO);
     this.gl.useProgram(this.textBlendPass1Program);
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
     const viewportScaleLocation = this.gl.getUniformLocation(
@@ -363,7 +438,7 @@ class Atlas {
     this.glyphCtx.textBaseline = "bottom";
     this.glyphCtx.scale(style.dpiScale, style.dpiScale);
 
-    this.shouldUpdateTexture = false
+    this.shouldUploadTexture = false
     this.texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, this.texture);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -403,7 +478,7 @@ class Atlas {
   }
 
   rasterizeGlyph(text, variantIndex) {
-    this.shouldUpdateTexture = true
+    this.shouldUploadTexture = true
 
     const { dpiScale, computedLineHeight } = this.style;
     const variantOffset = variantIndex / SUBPIXEL_DIVISOR;
@@ -439,7 +514,7 @@ class Atlas {
   }
 
   uploadTexture () {
-    if (this.shouldUpdateTexture) {
+    if (this.shouldUploadTexture) {
       this.gl.texImage2D(
         this.gl.TEXTURE_2D,
         0,
@@ -451,7 +526,7 @@ class Atlas {
         this.gl.UNSIGNED_BYTE,
         this.glyphCanvas
       );
-      this.shouldUpdateTexture = false
+      this.shouldUploadTexture = false
     }
   }
 }
