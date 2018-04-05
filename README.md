@@ -145,6 +145,10 @@ All code related to Isobar should live in this repository, but intra-repository 
 
 Well-formulated PRs and issues will reive some form of response by the end of next business day. If this interferes with our ability to learn, we revisit.
 
+## Contributing
+
+Intereseted in helping out? Welcome! Check out the [CONTRIBUTING](./CONTRIBUTING.md) guide to get started.
+
 ## Q2 2018 Roadmap
 
 The primary goal of the next three months is to validate the key ideas presented in this document and to get a sense for how long the envisioned system might take to develop. That's a pretty abstract goal, however.
