@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "napi",
+    "isobar_core",
+    "isobar_node",
+]
