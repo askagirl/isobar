@@ -10,7 +10,7 @@ use buffer::{self, Buffer, Point, Anchor};
 use movement;
 
 #[derive(Clone)]
-pub struct Version(buffer::Version, usize); 
+pub struct Version(buffer::Version, usize);
 
 pub struct Editor {
     buffer: Rc<RefCell<Buffer>>,
@@ -81,7 +81,7 @@ impl Editor {
         let version_cell = self.version.clone();
         let buffer_observation = self.buffer.borrow().version.observe().for_each(
             move |buffer_version| {
-                version_cell.set(Version(buffer_version, 0);
+                version_cell.set(Version(buffer_version, 0));
                 Ok(())
             },
         );
@@ -457,7 +457,7 @@ impl Editor {
     fn inc_version(&mut self) {
         self.version.get().map(|old_version| {
             self.version.set(Version(old_version.0, old_version.1 + 1));
-        })
+        });
     }
 }
 
@@ -530,7 +530,9 @@ mod tests {
     #[test]
     fn test_cursor_movement() {
         let mut editor = Editor::new(Rc::new(RefCell::new(Buffer::new(1))));
-        editor.buffer.borrow_mut().splice(0..0, "abc\n\ndef");
+        editor.buffer.borrow_mut().splice(0..0, "abc");
+        editor.buffer.borrow_mut().splice(3..3, "\n");
+        editor.buffer.borrow_mut().splice(4..4, "\ndef");
         assert_eq!(render_selections(&editor), vec![empty_selection(0, 0)]);
 
         editor.move_right();
@@ -601,7 +603,10 @@ mod tests {
     #[test]
     fn test_selection_movement() {
         let mut editor = Editor::new(Rc::new(RefCell::new(Buffer::new(1))));
-        editor.buffer.borrow_mut().splice(0..0, "abc\n\ndef");
+        editor.buffer.borrow_mut().splice(0..0, "abc");
+        editor.buffer.borrow_mut().splice(3..3, "\n");
+        editor.buffer.borrow_mut().splice(4..4, "\ndef");
+
         assert_eq!(render_selections(&editor), vec![empty_selection(0, 0)]);
 
         editor.select_right();
@@ -904,15 +909,15 @@ mod tests {
     fn test_render_past_last_line() {
         let line_height = 4.0;
         let mut editor = Editor::new( Rc::new(RefCell::new(Buffer::new(1))));
-        editor.buffer.borrow_mut(Point::new(2, 3), Point::new(2, 3));
-        editor.add_selection(Point::new(2, 3), Point::new(2, 3))
+        editor.buffer.borrow_mut().splice(0..0, "abc\ndef\nghi");
+        editor.add_selection(Point::new(2, 3), Point::new(2, 3));
 
         let frame = editor.render(render::Params {
             line_height,
             scroll_top: 2.0 * line_height,
             height: 3.0 * line_height,
         });
-        assert_eq!(frame.first_visible_row, 2)
+        assert_eq!(frame.first_visible_row, 2);
         assert_eq!(stringify_lines(frame.lines), vec!["ghi"]);
         assert_eq!(frame.selections, vec![selection((2, 3), (2, 3))]);
 
