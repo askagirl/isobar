@@ -26,14 +26,15 @@ pub struct Buffer {
     lamport_clock: LamportTimestamp,
     fragments: Tree<Fragment>,
     insertions: HashMap<ChangeId, Tree<FragmentMapping>>,
-    position_cache: RefCell<HashMap<Anchor, (usize, Point)>>,
+    anchor_cache: RefCell<HashMap<Anchor, (usize, Point)>>,
+    offset_cache: RefCell<HashMap<Point, usize>>,
     pub version: NotifyCell<Version>
 }
 
 #[derive(Clone, Copy, Debug)]
 pub struct Version(LocalTimestamp);
 
-#[derive(Clone, Copy, Eq, PartialEq, Debug)]
+#[derive(Clone, Copy, Eq, PartialEq, Debug, Hash)]
 pub struct Point {
     pub row: u32,
     pub column: u32
@@ -87,7 +88,7 @@ struct ChangeId {
 }
 
 #[derive(Ord, PartialOrd, Eq, PartialEq, Clone, Debug)]
-struct FragmentId(Vec<u16>);
+struct FragmentId(Arc<Vec<u16>>);
 
 #[derive(Eq, PartialEq, Clone, Debug)]
 struct Fragment {
@@ -146,7 +147,8 @@ impl Buffer {
             lamport_clock: 0,
             fragments,
             insertions: HashMap::new(),
-            position_cache: RefCell::new(HashMap::new()),
+            anchor_cache: RefCell::new(HashMap::new()),
+            offset_cache: RefCell::new(HashMap::new()),
             version: NotifyCell::new(Version(0))
         }
     }
@@ -195,7 +197,8 @@ impl Buffer {
                 local_timestamp: self.local_clock
             };
             self.splice_fragments(change_id, old_range, new_text);
-            self.position_cache.borrow_mut().clear();
+            self.anchor_cache.borrow_mut().clear();
+            self.offset_cache.borrow_mut().clear();
             self.version.set(Version(self.local_clock));
         }
     }
@@ -392,17 +395,13 @@ impl Buffer {
         let fragment = cursor.item().unwrap();
         let offset_in_fragment = offset - cursor.start::<CharacterCount>().0;
         let offset_in_insertion = fragment.start_offset + offset_in_fragment;
+        let point = cursor.start::<Point>() + &fragment.point_for_offset(offset_in_fragment)?;
         let anchor = Anchor(AnchorInner::Middle {
             insertion_id: fragment.insertion.id,
             offset: offset_in_insertion,
             bias
         });
-
-        if let Ok(mut position_cache) = self.position_cache.try_borrow_mut() {
-            let point = cursor.start::<Point>() + &fragment.point_for_offset(offset_in_fragment)?;
-            position_cache.insert(anchor.clone(), (offset, point.clone()));
-        }
-
+        self.cache_position(Some(anchor.clone()), offset, point);
         Ok(anchor)
     }
 
@@ -448,12 +447,8 @@ impl Buffer {
             offset: offset_in_insertion,
             bias
         });
-
-        if let Ok(mut position_cache) = self.position_cache.try_borrow_mut() {
-            let offset = cursor.start::<CharacterCount>().0 + offset_in_fragment;
-            position_cache.insert(anchor.clone(), (offset, point.clone()));
-        }
-
+        let offset = cursor.start::<CharacterCount>().0 + offset_in_fragment;
+        self.cache_position(Some(anchor.clone()), offset, point);
         Ok(anchor)
     }
 
@@ -470,13 +465,13 @@ impl Buffer {
             &AnchorInner::Start => Ok((0, Point {row: 0, column: 0})),
             &AnchorInner::End => Ok((self.len(), self.fragments.len::<Point>())),
             &AnchorInner::Middle { ref insertion_id, offset, ref bias } => {
-                let position = {
-                    let position_cache = self.position_cache.try_borrow();
-                    position_cache.ok().and_then(|position_cache| position_cache.get(&anchor).cloned())
+                let cached_position = {
+                    let anchor_cache = self.anchor_cache.try_borrow().ok();
+                    anchor_cache.as_ref().and_then(|cache| cache.get(anchor).cloned())
                 };
 
-                if position.is_some() {
-                    Ok(position.unwrap())
+                if let Some(cached_position) = cached_position {
+                    Ok(cached_position)
                 } else {
                     let seek_bias = match bias {
                         &AnchorBias::Left => SeekBias::Left,
@@ -497,11 +492,7 @@ impl Buffer {
                             };
                             let offset = fragments_cursor.start::<CharacterCount>().0 + overshoot;
                             let point = fragments_cursor.start::<Point>() + &fragment.point_for_offset(overshoot)?;
-
-                            if let Ok(mut position_cache) = self.position_cache.try_borrow_mut() {
-                                position_cache.insert(anchor.clone(), (offset, point));
-                            }
-
+                            self.cache_position(Some(anchor.clone()), offset, point);
                             Ok((offset, point))
                         })
                     })
@@ -511,18 +502,41 @@ impl Buffer {
     }
 
     fn offset_for_point(&self, point: Point) -> Result<usize> {
-        let mut fragments_cursor = self.fragments.cursor();
-        fragments_cursor.seek(&point, SeekBias::Left);
-        fragments_cursor.item().ok_or(Error::OffsetOutOfRange).map(|fragment| {
-            let overshoot = fragment.offset_for_point(point - &fragments_cursor.start::<Point>()).unwrap();
-            &fragments_cursor.start::<CharacterCount>().0 + &overshoot
-        })
+        let cached_offset = {
+            let offset_cache = self.offset_cache.try_borrow().ok();
+            offset_cache.as_ref().and_then(|cache| cache.get(&point).cloned())
+        };
+
+        if let Some(cached_offset) = cached_offset {
+            Ok(cached_offset)
+        } else {
+            let mut fragments_cursor = self.fragments.cursor();
+            fragments_cursor.seek(&point, SeekBias::Left);
+            fragments_cursor.item().ok_or(Error::OffsetOutOfRange).map(|fragment| {
+                let overshoot = fragment.offset_for_point(point - &fragments_cursor.start::<Point>()).unwrap();
+                let offset = &fragments_cursor.start::<CharacterCount>().0 + &overshoot;
+                self.cache_position(None, offset, point);
+                offset
+            })
+        }
     }
 
     pub fn cmp_anchors(&self, a: &Anchor, b: &Anchor) -> Result<cmp::Ordering> {
         let a_offset = self.offset_for_anchor(a)?;
         let b_offset = self.offset_for_anchor(b)?;
         Ok(a_offset.cmp(&b_offset))
+    }
+
+    fn cache_position(&self, anchor: Option<Anchor>, offset: usize, point: Point) {
+        anchor.map(|anchor| {
+            if let Ok(mut anchor_cache) = self.anchor_cache.try_borrow_mut() {
+                anchor_cache.insert(anchor, (offset, point));
+            }
+        });
+
+        if let Ok(mut offset_cache) = self.offset_cache.try_borrow_mut() {
+            offset_cache.insert(point, offset);
+        }
     }
 }
 
@@ -720,13 +734,18 @@ impl<'a> From<Vec<u16>> for Text {
     }
 }
 
+lazy_static! {
+    static ref FRAGMENT_ID_MIN_VALUE: FragmentId = FragmentId(Arc::new(vec![0 as u16]));
+    static ref FRAGMENT_ID_MAX_VALUE: FragmentId = FragmentId(Arc::new(vec![u16::max_value()]));
+}
+
 impl FragmentId {
     fn min_value() -> Self {
-        FragmentId(vec![0 as u16])
+        FRAGMENT_ID_MIN_VALUE.clone()
     }
 
     fn max_value() -> Self {
-        FragmentId(vec![u16::max_value()])
+        FRAGMENT_ID_MAX_VALUE.clone()
     }
 
     fn between(left: &Self, right: &Self) -> Self {
@@ -748,7 +767,7 @@ impl FragmentId {
             }
         }
 
-        FragmentId(new_entries)
+        FragmentId(Arc::new(new_entries))
     }
 }
 
@@ -1097,7 +1116,7 @@ mod tests {
             use self::rand::{Rng, SeedableRng, StdRng};
             let mut rng = StdRng::from_seed(&[seed]);
 
-            let mut ids = vec![FragmentId(vec![0]), FragmentId(vec![4])];
+            let mut ids = vec![FragmentId(Arc::new(vec![0])), FragmentId(Arc::new(vec![4]))];
             for _i in 0..100 {
                 let index = rng.gen_range::<usize>(1, ids.len());
 
