@@ -87,7 +87,7 @@ struct ChangeId {
 }
 
 #[derive(Ord, PartialOrd, Eq, PartialEq, Clone, Debug)]
-struct FragmentId(Arc<Vec<u16>>);
+struct FragmentId(Vec<u16>);
 
 #[derive(Eq, PartialEq, Clone, Debug)]
 struct Fragment {
@@ -720,18 +720,13 @@ impl<'a> From<Vec<u16>> for Text {
     }
 }
 
-lazy_static! {
-    static ref FRAGMENT_ID_MIN_VALUE: FragmentId = FragmentId(Arc::new(vec![0 as u16]));
-    static ref FRAGMENT_ID_MAX_VALUE: FragmentId = FragmentId(Arc::new(vec![u16::max_value()]));
-}
-
 impl FragmentId {
     fn min_value() -> Self {
-        FRAGMENT_ID_MIN_VALUE.clone()
+        FragmentId(vec![0 as u16])
     }
 
     fn max_value() -> Self {
-        FRAGMENT_ID_MAX_VALUE.clone()
+        FragmentId(vec![u16::max_value()])
     }
 
     fn between(left: &Self, right: &Self) -> Self {
@@ -753,7 +748,7 @@ impl FragmentId {
             }
         }
 
-        FragmentId(Arc::new(new_entries))
+        FragmentId(new_entries)
     }
 }
 
@@ -1102,7 +1097,7 @@ mod tests {
             use self::rand::{Rng, SeedableRng, StdRng};
             let mut rng = StdRng::from_seed(&[seed]);
 
-            let mut ids = vec![FragmentId(Arc::new(vec![0])), FragmentId(Arc::new(vec![4]))];
+            let mut ids = vec![FragmentId(vec![0]), FragmentId(vec![4])];
             for _i in 0..100 {
                 let index = rng.gen_range::<usize>(1, ids.len());
 
