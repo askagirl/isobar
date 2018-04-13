@@ -17,7 +17,7 @@ const USAGE: &'static str = "
 Isobar
 
 Usage:
-  isobar <path>...
+  isobar [--socket-path=<path>] <path>...
   isobar (-h | --help)
 
 Options:
@@ -28,6 +28,7 @@ const DEFAULT_SOCKET_PACK: &'static str = "/tmp/isobar.sock";
 
 #[derive(Debug, Deserialize)]
 struct Args {
+    flag_socket_path: Option<String>,
     arg_path: Vec<String>,
 }
 
@@ -41,7 +42,7 @@ fn main() {
         "paths": args.arg_path
     });
 
-    let socket_path = DEFAULT_SOCKET_PACK;
+    let socket_path = args.flag_socket_path.as_ref().map_or(DEFAULT_SOCKET_PACK, |path| path.as_str());
 
     if let Ok(mut socket) = UnixStream::connect(socket_path) {
         if let Err(error) = write_to_socket(&mut socket, message) {
@@ -60,11 +61,12 @@ fn main() {
         let electron_bin_path = electron_app_path.join("node_modules/.bin/electron");
         Command::new(electron_bin_path)
             .arg(electron_app_path)
+            .env("ISOBAR_SOCKET_PATH", socket_path)
             .env("ISOBAR_INITIAL_MESSAGE", message.to_string())
             .spawn()
             .expect("Failed to open Isobar app");
     } else {
-        eprintln!("Must specify the ISOBAR_APP_PATH environment variable");
+        eprintln!("Must specify the ISOBAR_SRC_PATH environment variable");
     }
 }
 

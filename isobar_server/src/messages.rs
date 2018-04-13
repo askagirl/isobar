@@ -2,7 +2,8 @@ use std::path::PathBuf;
 
 #[derive(Serialize, Deserialize)]
 #[serde(tag = "type")]
-pub enum IncomingMessages {
+pub enum IncomingMessage {
+    StartApplication,
     OpenWorkspace { paths: Vec<PathBuf> },
 }
 
