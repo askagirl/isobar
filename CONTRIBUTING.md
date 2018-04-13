@@ -6,6 +6,12 @@ As the architecture stabilizes and the surface area of the project expands, ther
 
 It's really important to us to have a smooth on-ramp for contributors, and one great way you can contribute is by helping us improve this guide. If your experience is bumpy, can you open a pull request that makes it smoother for the next person?
 
+## Communicating with maintainers
+
+The best way to communicate with maintainers is by posting issue to this repository. The more thought you put into articulating your question or idea, the more value you'll be adding the community and easier it will be for maintainers to respond. That said, just try your best. If you have something you want to say, we'd prefer that you say it imperfectly rather than not saying it at all.
+
+You can also communicate with maintainers or other community members on the `#isobar` channel on Siberian Media Holding's public slack instance. After you [request an invite via this form](https://siberianmh-slack.herokuapp.com/), you can access our Slack instance at https://siberian-holding.slack.com.
+
 ## Building
 
 So far, we have only built this project on macOS. If you'd like to help improve our build or documnetation to support other platfroms, that would be a huge help!
