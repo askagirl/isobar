@@ -4,6 +4,7 @@ Isobar is an experimental Electron-based text editor informed by what we've lear
 
 ## Updates
 
+* [April 16, 2018](./docs/updates/2018_04_16.md)
 * [April 9, 2018](./docs/updates/2018_04_09.md)
 * [April 2, 2018](./docs/updates/2018_04_02.md)
 
