@@ -1,5 +1,3 @@
-extern crate isobar_core;
-
 use futures::{Future, Stream, Sink};
 use futures::sync::mpsc;
 use messages::{IncomingMessage, OutgoingMessage};
