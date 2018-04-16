@@ -13,7 +13,8 @@ const IsobarClient = require('../shared/isobar_client');
 const ThemeProvider = require("./theme_provider");
 const TextEditor = require("./text_editor/text_editor");
 
-const {socketPath, windowId} = QueryString.parse(window.location.serach);
+let {socketPath, windowId} = QueryString.parse(window.location.search.replace('?', ''));
+windowId = Number(windowId)
 
 const isobarClient = new IsobarClient();
 isobarClient.start(socketPath).then(() => {
