@@ -21,7 +21,7 @@ async function start() {
   let initialRender = true;
   isobarClient.addMessageListener(message => {
     switch (message.type) {
-      case "WindowUpdate":
+      case "UpdateWindow":
         ViewRegistry.update(message);
         if (initialRender) {
           ReactDOM.render(
