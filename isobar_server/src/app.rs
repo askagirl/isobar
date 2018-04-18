@@ -7,8 +7,8 @@ use std::io;
 use std::path::PathBuf;
 use std::rc::Rc;
 use serde_json;
-use workspace::WorkspaceHandle;
-use window::{Window, ViewId};
+use isobar_core::workspace::WorkspaceHandle;
+use isobar_core::window::{Window, ViewId};
 use tokio_core::reactor;
 
 type OutboundSender = mpsc::UnboundedSender<OutgoingMessage>;
