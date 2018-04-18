@@ -37,7 +37,11 @@ async function start() {
     }
   });
 
-  isobarClient.sendMessage({ type: "StartWindow", window_id: Number(windowId) });
+  isobarClient.sendMessage({
+    type: "StartWindow",
+    window_id: Number(windowId),
+    height: window.innerHeight
+  });
 }
 
 function buildViewRegistry(client) {
