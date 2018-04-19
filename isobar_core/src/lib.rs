@@ -2,7 +2,7 @@
 extern crate lazy_static;
 extern crate futures;
 extern crate serde;
-#[maro_use]
+#[macro_use]
 extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
