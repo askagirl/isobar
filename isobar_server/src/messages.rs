@@ -12,11 +12,13 @@ pub enum IncomingMessage {
         window_id: WindowId,
         height: f64,
     },
-    OpenWorkspace { paths: Vec<PathBuf> },
+    OpenWorkspace {
+        paths: Vec<PathBuf>,
+    },
     Action {
         view_id: ViewId,
         action: serde_json::Value,
-    }
+    },
 }
 
 #[derive(Serialize, Debug)]
