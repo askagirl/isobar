@@ -7,7 +7,7 @@ use std::io;
 use std::path::PathBuf;
 use std::rc::Rc;
 use serde_json;
-use isobar_core::workspace::{WorkspaceHandle, WorkspaceView};
+use isobar_core::workspace::WorkspaceView;
 use isobar_core::window::{ViewId, Window};
 use tokio_core::reactor;
 
@@ -189,8 +189,7 @@ impl Inner {
         self.next_window_id += 1;
 
         let mut window = Window::new(0.0);
-        let workspace = WorkspaceHandle::new(paths);
-        let workspace_view_handle = window.handle().add_view(WorkspaceView::new(workspace));
+        let workspace_view_handle = window.handle().add_view(WorkspaceView::new());
         window.set_root_view(workspace_view_handle);
         self.windows.insert(window_id, window);
 

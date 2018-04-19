@@ -12,8 +12,7 @@ pub trait Item: Clone + Eq + fmt::Debug {
     fn summarize(&self) -> Self::Summary;
 }
 
-pub trait Dimension
-    : for<'a> Add<&'a Self, Output = Self> + Ord + Clone + fmt::Debug {
+pub trait Dimension: for<'a> Add<&'a Self, Output = Self> + Ord + Clone + fmt::Debug {
     type Summary: Default + Eq + Clone + fmt::Debug;
 
     fn from_summary(summary: &Self::Summary) -> Self;
@@ -40,6 +39,7 @@ pub enum Node<T: Item> {
     },
 }
 
+#[cfg(test)]
 pub struct Iter<'a, T: 'a + Item> {
     tree: &'a Tree<T>,
     did_start: bool,
@@ -97,6 +97,7 @@ impl<'a, T: Item> Tree<T> {
         summary
     }
 
+    #[cfg(test)]
     pub fn iter(&self) -> Iter<T> {
         Iter::new(self)
     }
@@ -330,6 +331,7 @@ impl<'a, T: Item> Tree<T> {
     }
 }
 
+#[cfg(test)]
 impl<'a, T: 'a + Item> Iter<'a, T> {
     fn new(tree: &'a Tree<T>) -> Self {
         Iter {
@@ -356,6 +358,7 @@ impl<'a, T: 'a + Item> Iter<'a, T> {
     }
 }
 
+#[cfg(test)]
 impl<'a, T: 'a + Item> Iterator for Iter<'a, T>
 where
     Self: 'a,
