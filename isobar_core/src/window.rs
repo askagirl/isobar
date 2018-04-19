@@ -185,13 +185,13 @@ impl Inner {
 }
 
 impl WindowHandle {
-    pub fn heigh(&self) -> f64 {
+    pub fn height(&self) -> f64 {
         let inner = self.0.upgrade().unwrap();
         let inner = inner.borrow();
         inner.height
     }
 
-    pub fn add_view<T: 'static + View>
+    pub fn add_view<T: 'static + View>(&self, mut view: T) -> ViewHandle {
         let view_id = {
             let inner = self.0.upgrade().unwrap();
             let mut inner = inner.borrow_mut();

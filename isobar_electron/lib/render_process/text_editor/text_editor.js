@@ -2,10 +2,16 @@ const React = require("react");
 const ReactDOM = require("react-dom");
 const PropTypes = require("prop-types");
 const { styled } = require("styletron-react");
-const TextPlane = require('./text_plane');
+const TextPlane = require("./text_plane");
 const $ = React.createElement;
 
-class TextEditorContainer extends React.Component {
+const Root = styled("div", {
+  width: "100%",
+  height: "100%",
+  overflow: "hidden"
+});
+
+class TextEditor extends React.Component {
   constructor(props) {
     super(props);
     this.onWheel = this.onWheel.bind(this);
@@ -15,7 +21,7 @@ class TextEditorContainer extends React.Component {
     }
 
     this.state = {
-      resizeObserver: new resizeObserver(([{contentRect}]) =>
+      resizeObserver: new ResizeObserver(([{contentRect}]) =>
         this.componentDidResize({width: contentRect.width, height: contentRect.height})
       ),
       scrollTop: 0,
@@ -42,13 +48,13 @@ class TextEditorContainer extends React.Component {
 
   componentWillUnmount() {
     const element = ReactDOM.findDOMNode(this);
-    element.removeEventListener('whell', this.onWheel, {passive: true});
+    element.removeEventListener('wheel', this.onWheel, {passive: true});
     this.state.resizeObserver.disconnect();
     window.clearInterval(this.state.cursorBlinkIntervalHandle);
   }
 
   componentDidResize(measurements) {
-    this.props.dispach({
+    this.props.dispatch({
       type: 'SetDimensions',
       width: measurements.width,
       height: measurements.height
@@ -56,16 +62,20 @@ class TextEditorContainer extends React.Component {
   }
 
   render() {
-    return $(TextEditor, {
-      showCursors: this.state.showCursors,
-      lineHeight: this.props.line_height,
-      scrollTop: this.props.scroll_top,
-      height: this.props.height,
-      width: this.props.width,
-      selections: this.props.selections,
-      firstVisibleRow: this.props.first_visible_row,
-      lines: this.props.lines
-    });
+    return $(
+      Root,
+      {},
+      $(TextPlane, {
+        showCursors: this.state.showCursors,
+        lineHeight: this.props.line_height,
+        scrollTop: this.props.scroll_top,
+        height: this.props.height,
+        width: this.props.width,
+        selections: this.props.selections,
+        firstVisibleRow: this.props.first_visible_row,
+        lines: this.props.lines
+      })
+    );
   }
 
   onWheel (event) {
@@ -73,22 +83,8 @@ class TextEditorContainer extends React.Component {
   }
 }
 
-TextEditorContainer.contextTypes = {
+TextEditor.contextTypes = {
   theme: PropTypes.object
 };
 
-const Root = styled("div", {
-  width: "100%",
-  height: "100%",
-  overflow: "hidden"
-});
-
-function TextEditor(props) {
-  return $(
-    Root,
-    {onWhell: props.onWhell},
-    $(TextPlane, props)
-  );
-}
-
-module.exports = TextEditorContainer;
+module.exports = TextEditor;
