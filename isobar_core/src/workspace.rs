@@ -43,7 +43,7 @@ enum FileFinderAction {
     UpdateQuery { query: String }
 }
 
-impl Window {
+impl Workspace {
     fn new(paths: Vec<PathBuf>) -> Self {
         Self { paths }
     }
@@ -128,7 +128,7 @@ impl View for WorkspaceView {
     fn dispatch_action(&mut self, action: serde_json::Value) {
         match serde_json::from_value(action) {
             Ok(WorkspaceViewAction::ToggleFileFinder) => self.toggle_file_finder(),
-            _ =>  eprintln!("Unrecognized action"),
+            _ => eprintln!("Unrecognized action"),
         }
     }
 }
