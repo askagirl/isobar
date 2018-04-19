@@ -105,7 +105,7 @@ impl App {
             .spawn(Self::handle_app_messages(inner.clone(), incoming));
     }
 
-    fn stsart_window<O, I>(
+    fn start_window<O, I>(
         inner: Rc<RefCell<Inner>>,
         outgoing: O,
         incoming: I,

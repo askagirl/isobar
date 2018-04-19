@@ -1,9 +1,6 @@
 [workspace]
 members = [
-    "napi",
     "isobar_core",
-    "isobar_node",
     "isobar_server",
     "isobar_cli",
 ]
-exclude = ["napi/test_module"]
