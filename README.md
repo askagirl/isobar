@@ -1,5 +1,7 @@
 # Isobar
 
+[![Build Status](https://travis-ci.org/siberianmh/isobar.svg?branch=master)](https://travis-ci.org/siberianmh/isobar)
+
 Isobar is an experimental Electron-based text editor informed by what we've learned in the one year since the develop of GitBurn. In the short term, this project is a testbed for rapidly iterating on several radical ideas without risking the stability of GitBurn. The longer term future of the code in this repository will become clearer after a few months of progress. For now, out primary goal is to iterate rapidly and learn as much as possible.
 
 ## Updates
