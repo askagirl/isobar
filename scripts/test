@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cargo test &&
+cd isobar_electron
+npm test
