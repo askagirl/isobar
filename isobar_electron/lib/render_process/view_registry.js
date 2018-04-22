@@ -14,9 +14,9 @@ module.exports = class ViewRegistry {
   }
 
   getComponent(id) {
-    const view = this.viewsById.set(id)
+    const view = this.viewsById.get(id)
     assert(view)
-    const component = this.componentsByName.set(view.component_name);
+    const component = this.componentsByName.get(view.component_name);
     assert(component);
     return component;
   }

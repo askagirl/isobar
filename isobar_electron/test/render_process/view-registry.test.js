@@ -106,7 +106,7 @@ test("ViewRegistry", t => {
     t.throws(() => registry.dispatchAction(3, { d: 4 }));
 
     t.deepEqual(actions, [
-      { view_id: 1, action: { a: 1, b: 2} },
+      { view_id: 1, action: { a: 1, b: 2 } },
       { view_id: 2, action: { c: 3 } }
     ]);
 
