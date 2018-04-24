@@ -11,7 +11,7 @@ const Root = styled("div", {
 
 const QueryInput = styled("input", {
   width: "100%",
-  boxLines: "border-box"
+  boxSizing: "border-box"
 });
 
 const SearchResultList = styled("ol", {
@@ -29,7 +29,7 @@ const SearchResultListItem = styled("li", {
 module.exports = class FileFinder extends React.Component {
   constructor() {
     super();
-    this.didChangeQuery = this.didChangeQuery.bind(this)
+    this.didChangeQuery = this.didChangeQuery.bind(this);
   }
 
   render() {
@@ -44,7 +44,7 @@ module.exports = class FileFinder extends React.Component {
   }
 
   renderSearchResult(result) {
-    const path = result.string,;
+    const path = result.string;
     const matchIndices = result.match_indices;
 
     let pathIndex = 0;
