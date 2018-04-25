@@ -11,7 +11,7 @@ pub struct FileFinderView {
     query: String,
     search_results: Vec<SearchResult>,
     search_updates: Option<NotifyCellObserver<Vec<SearchResult>>>,
-    window_handle: Option<WindowHandle>
+    window_handle: Option<WindowHandle>,
     updates: NotifyCell<()>,
 }
 
@@ -34,7 +34,7 @@ impl View for FileFinderView {
     }
 
     fn will_mount(&mut self, window_handle: WindowHandle) {
-        self.window_handle = Some(wondow_handle);
+        self.window_handle = Some(window_handle);
     }
 
     fn dispatch_action(&mut self, action: serde_json::Value) {
