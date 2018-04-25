@@ -135,7 +135,7 @@ impl BufferView {
                 .collect();
         }
 
-        self.updates();
+        self.updated();
     }
 
     pub fn add_selection(&mut self, start: Point, end: Point) {
@@ -1101,6 +1101,7 @@ mod tests {
     fn test_render_past_last_line() {
         let line_height = 4.0;
         let mut editor = BufferView::new(Rc::new(RefCell::new(Buffer::new(1))));
+
         editor
             .set_height(3.0 * line_height)
             .set_line_height(line_height)

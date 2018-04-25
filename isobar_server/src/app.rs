@@ -1,6 +1,6 @@
 use futures::{Future, Sink, Stream};
 use futures::sync::mpsc;
-use futures_cpupool::CpuPoll;
+use futures_cpupool::CpuPool;
 use messages::{IncomingMessage, OutgoingMessage};
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -191,7 +191,7 @@ impl Inner {
         let window_id = self.next_window_id;
         self.next_window_id += 1;
 
-        let background_executor = Box::new(CpuPoll::new_num_cpus());
+        let background_executor = Box::new(CpuPool::new_num_cpus());
         let mut window = Window::new(Some(background_executor), 0.0);
 
         let roots = paths.iter()

@@ -93,7 +93,7 @@ impl Search {
                         }
 
                         new_variant.match_indices.push(match_index);
-                        new_variant.push(variant);
+                        new_variants.push(new_variant);
                     }
                 }
             }
