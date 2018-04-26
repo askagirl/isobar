@@ -276,7 +276,7 @@ mod tests {
         let needle = to_chars("abc");
         let mut matcher = Matcher::new(&needle);
         assert_eq!(matcher.push(&to_chars("abra/")), false);
-        assert_eq!(matcher.push(&to_chars("cadabra")), true)
+        assert_eq!(matcher.push(&to_chars("cadabra")), true);
         matcher.pop();
         assert_eq!(matcher.push(&to_chars("ham")), false);
         assert_eq!(matcher.push(&to_chars("lincoln")), true);
