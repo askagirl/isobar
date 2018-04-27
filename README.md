@@ -162,16 +162,18 @@ By June 1, we'd like it to be possible for multiple Isobar clients to connect to
 * [ ] File finder
 * [ ] Load and save buffers
 * [ ] Key bindings system
-* [ ] Flesh out basic editor experience
-  * [ ] Gutter with line numbers
-  * [ ] Autoscroll
-  * [ ] Low-hanging movement and editing operations
 * [ ] Remote headless workspace
   * [ ] File finder
   * [ ] Loading a buffer
   * [ ] Editing can be shared between multiple participants
   * [ ] Saving
-  * [ ] DiscussionsUpdate roadmap 
+  * [ ] DiscussionsUpdate roadmap
+  * [ ] Following
+* [ ] Flesh out basic editor experience
+  * [ ] Gutter with line number
+  * [ ] Autoscroll
+  * [ ] Easy movement and editing operations
+  * [ ] Mouse interaction
 
 ## Q3 2018
 
