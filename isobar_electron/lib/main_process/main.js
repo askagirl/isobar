@@ -16,8 +16,6 @@ if (!SOCKET_PATH) {
   process.exit(1);
 }
 
-const INITIAL_MESSAGE = process.env.ISOBAR_INITIAL_MESSAGE;
-
 class IsobarApplication {
   constructor (serverPath, socketPath) {
     this.serverPath = serverPath;
@@ -45,9 +43,6 @@ class IsobarApplication {
     await this.isobarClient.start(this.socketPath);
     this.isobarClient.addMessageListener(this._handleMessage.bind(this));
     this.isobarClient.sendMessage({type: 'StartApp'});
-    if (initialMessage) {
-      this.isobarClient.sendMessage(JSON.parse(initialMessage));
-    }
   }
 
   async _handleMessage (message) {
@@ -82,4 +77,6 @@ app.on('window-all-closed', function () {
 });
 
 const application = new IsobarApplication(SERVER_PATH, SOCKET_PATH);
-application.start(INITIAL_MESSAGE);
+application.start().then(() => {
+  console.log('Listening');
+});
