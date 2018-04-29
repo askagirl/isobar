@@ -4,15 +4,17 @@ const path = require('path');
 const url = require('url')
 const IsobarClient = require('../shared/isobar_client');
 
-const SERVER_PATH = path.join(__dirname, '..', '..', '..', 'target', 'debug', 'isobar_server');
+const SERVER_BUILD_CONFIGURATION = process.env.NODE_ENV === 'development'
+  ? 'debug'
+  : 'release';
+
+const SERVER_PATH = path.join(__dirname, '..', '..', '..', 'target', SERVER_BUILD_CONFIGURATION, 'isobar_server');
 
 const SOCKET_PATH = process.env.ISOBAR_SOCKET_PATH;
 if (!SOCKET_PATH) {
   console.error('Missing ISOBAR_SOCKET_PATH environment variable');
   process.exit(1);
 }
-
-const INITIAL_MESSAGE = process.env.ISOBAR_INITIAL_MESSAGE;
 
 class IsobarApplication {
   constructor (serverPath, socketPath) {
@@ -41,9 +43,6 @@ class IsobarApplication {
     await this.isobarClient.start(this.socketPath);
     this.isobarClient.addMessageListener(this._handleMessage.bind(this));
     this.isobarClient.sendMessage({type: 'StartApp'});
-    if (initialMessage) {
-      this.isobarClient.sendMessage(JSON.parse(initialMessage));
-    }
   }
 
   async _handleMessage (message) {
@@ -78,4 +77,6 @@ app.on('window-all-closed', function () {
 });
 
 const application = new IsobarApplication(SERVER_PATH, SOCKET_PATH);
-application.start(INITIAL_MESSAGE);
+application.start().then(() => {
+  console.log('Listening');
+});
