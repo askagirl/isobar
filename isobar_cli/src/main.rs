@@ -10,7 +10,6 @@ use std::path::{Path, PathBuf};
 use std::error::Error;
 use docopt::Docopt;
 use std::os::unix::net::UnixStream;
-use serde_json::value::Value;
 use std::io::{Write, BufReader, BufRead};
 use std::process;
 use std::fs;
@@ -28,7 +27,14 @@ Options:
   -l --listen=<port>  Listen on specified port.
 ";
 
-const DEFAULT_SOCKET_PACK: &'static str = "/tmp/isobar.sock";
+type PortNumber = u16;
+
+#[derive(Serialize)]
+#[serde(tag = "type")]
+enum ServerRequest {
+    StartCLI,
+    OpenWorkspace { paths: Vec<PathBuf> },
+}
 
 #[derive(Deserialize)]
 #[serde(tag = "type")]
@@ -36,8 +42,6 @@ enum ServerResponse {
     Ok,
     Error { description: String },
 }
-
-type PortNumber = u16;
 
 #[derive(Debug, Deserialize)]
 struct Args {
@@ -62,9 +66,10 @@ fn main_inner() -> Result<(), String> {
         .and_then(|d| d.deserialize())
         .unwrap_or_else(|e| e.exit());
 
+    const DEFAULT_SOCKET_PATH: &'static str = "/tmp/isobar.sock";
     let socket_path = PathBuf::from(args.flag_socket_path
         .as_ref()
-        .map_or(DEFAULT_SOCKET_PACK, |path| path.as_str()));
+        .map_or(DEFAULT_SOCKET_PATH, |path| path.as_str()));
 
     let mut socket = match UnixStream::connect(&socket_path) {
         Ok(socket) => socket,
@@ -90,8 +95,8 @@ fn main_inner() -> Result<(), String> {
         }
     };
 
-    write_to_socket(&mut socket, json!({ "type": "StartCLI" }))
-        .expect("Failed to write to socket");
+    send_message(&mut socket, ServerRequest::StartCLI)
+        .expect("Failed to send message");
 
     let mut paths = Vec::new();
     for path in args.arg_path {
@@ -99,8 +104,8 @@ fn main_inner() -> Result<(), String> {
             .map_err(|error| format!("Invalid path {:?} - {}", path, error))?);
     }
 
-    write_to_socket(&mut socket, json!({ "type": "OpenWorkspace", "paths": paths }))
-        .expect("Failed to write to socket");
+    send_message(&mut socket, ServerRequest::OpenWorkspace { paths })
+        .expect("Failed to send message");
 
     let mut reader = BufReader::new(&mut socket);
     let mut line = String::new();
@@ -152,9 +157,8 @@ fn start_electron(src_path: &Path, server_bin_path: &Path, socket_path: &Path, n
     UnixStream::connect(socket_path).map_err(|_| String::from("Error connecting to socket"))
 }
 
-fn write_to_socket(socket: &mut UnixStream, value: Value) -> Result<(), Box<Error>> {
-    let vec = serde_json::to_vec(&value)?;
-    socket.write(&vec)?;
+fn send_message(socket: &mut UnixStream,message: ServerRequest) -> Result<(), Box<Error>> {
+    socket.write(&serde_json::to_vec(&message)?)?;
     socket.write(b"\n")?;
     Ok(())
 }
