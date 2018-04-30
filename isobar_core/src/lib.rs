@@ -15,6 +15,7 @@ pub mod buffer;
 pub mod buffer_view;
 pub mod fs;
 pub mod notify_cell;
+pub mod messages;
 pub mod schema_capnp { include!(concat!(env!("OUT_DIR"), "src/schema/capnp.rs")); }
 pub mod window;
 pub mod workspace;
