@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 use serde_json;
-use app::WindowId;
+use isobar_core::{WindowId};
 use isobar_core::window::{self, ViewId};
 
 #[derive(Deserialize, Debug)]
