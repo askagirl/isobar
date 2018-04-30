@@ -1,7 +1,7 @@
 use fs;
 use schema_capnp;
 use serde_json;
-use std::cell:RefCell;
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 use window::{Executor, ViewId, Window, WindowUpdateStream};
