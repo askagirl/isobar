@@ -46,7 +46,7 @@ We expose conventient and powerful APIs to enable users to add non-trivial funct
 
 *Editing on GitHub feels like editing in Isobar.*
 
-We provide a feature-rich editor component that can be used on the web and within other Electron applications. This wiil ultimately help us provide a more unified experience between GitHub.com and this editor and give us a stronger base of stakeholders in the core editing technology. If this forces serious performance compromises we may potentially drop this objective, but we don't think that it will.
+We want to provide a full-featured editor experience that can be used from within a browser. This wiil ultimately help us provide a more unified experience between GitHub.com and Isobar and give us a stronger base of stakeholders in the core editing technology.
 
 ## Architecture
 
