@@ -1,7 +1,6 @@
 use fs;
 use futures::unsync::mpsc::{self, UnboundedReceiver, UnboundedSender};
 use futures::{future, Future};
-use schema_capnp;
 use serde_json;
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -47,11 +46,11 @@ impl App {
         self.0.borrow_mut().updates_rx.take()
     }
 
-    pub fn headless(&self) -> {
+    pub fn headless(&self) -> bool {
         self.0.borrow().headless
     }
 
-    pub fn open_worspace(&self, roots: Vec<Box<fs:Tree>>) {
+    pub fn open_worspace(&self, roots: Vec<Box<fs::Tree>>) {
         let mut state = self.0.borrow_mut();
         let workspace = WorkspaceHandle::new(roots);
         if !state.headless {
@@ -82,9 +81,7 @@ impl App {
         let mut state = self.0.borrow_mut();
         match state.windows.get_mut(&window_id) {
             Some(ref mut window) => window.dispatch_action(view_id, action),
-            None = unimplemented!(),
+            None => unimplemented!(),
         };
     }
 }
-
-impl schema_capnp::peer::Server for App {}
