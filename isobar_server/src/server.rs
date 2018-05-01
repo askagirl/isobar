@@ -208,7 +208,6 @@ impl Server {
                 let rpc = RpcSystem::new(Box::new(network), Some(peer.client));
                 reactor.spawn(rpc.map_err(|err| eprintln!("Cap'n Proto RPC Error: {}", err)));
 
-                eprintln!("Server: OK!");
                 Ok(())
             });
         self.reactor.spawn(handle_icoming);
@@ -230,7 +229,14 @@ impl Server {
                 1 => {
                     let workspace = workspaces.get(0).unwrap();
                     let project_request = workspace.project_request();
-                    let trees_request = project_request.send().pipeline.get_project();
+                    let trees_request = project_request
+                        .send()
+                        .pipeline
+                        .get_project()
+                        .trees_request()
+                        .send()
+                        .promise;
+
                     Ok(())
                 },
                 _ => unimplemented!()
