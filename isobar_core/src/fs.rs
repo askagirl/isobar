@@ -165,7 +165,7 @@ mod tests {
             Ok(())
         );
         assert_eq!(
-            root.insert(Entry::file(OsString::from("a"), false, false))
+            root.insert(Entry::file(OsString::from("a"), false, false)),
             Err(())
         );
         assert_eq!(root.entry_names(), vec!["a", "b", "c"]);
