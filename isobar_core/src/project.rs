@@ -312,7 +312,7 @@ mod tests {
                 }
             }),
         );
-        let project = Porject::new(vec![Box::new(tree)]);
+        let project = Project::new(vec![Box::new(tree)]);
         let (mut search, observer) = project.search_paths("sub2", 10, true);
 
         assert_eq!(search.poll(), Ok(Async::Ready(())));
