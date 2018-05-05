@@ -41,12 +41,12 @@ impl Tree {
                 let file_name = entry.file_name();
 
                 if file_type.is_dir() {
-                    let dir = fs::Entry::dir( OsString::from(file_name), file_type.is_symlink(), entry.ignored());
-                    stack.last_mut().unwrap().insert(file_name, dir.clone()).unwrap();
+                    let dir = fs::Entry::dir(OsString::from(file_name), file_type.is_symlink(), entry.ignored());
+                    stack.last_mut().unwrap().insert(dir.clone()).unwrap();
                     stack.push(dir);
                 } else if file_type.is_file() {
                     let file = fs::Entry::file(OsString::from(file_name), file_type.is_symlink(), entry.ignored());
-                    stack.last_mut().unwrap().insert(file_name, file).unwrap();
+                    stack.last_mut().unwrap().insert(file).unwrap();
                 }
                 updates.set(());
             }
