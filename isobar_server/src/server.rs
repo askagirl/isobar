@@ -9,12 +9,12 @@ use std::rc::Rc;
 use tokio_core::net::{TcpListener, TcpStream};
 use tokio_core::reactor;
 use tokio_io::AsyncRead;
-use isobar_core::{self, App, WindowId};
-use isobar_core::app::AppUpdate;
+use xray_core::{self, App, WindowId};
+use xray_core::app::AppUpdate;
 
 #[derive(Clone)]
 pub struct Server {
-    app: isobar_core::App,
+    app: xray_core::App,
     reactor: reactor::Handle,
 }
 
@@ -99,15 +99,15 @@ impl Server {
         O: 'static + Sink<SinkItem = OutgoingMessage>,
         I: 'static + Stream<Item = IncomingMessage, Error = io::Error>,
     {
-        match (self.app.borrow().peer.headless(), headless) {
+        match (self.app.headless(), headless) {
             (true, false) => {
-                return self.send_response(outgoing, stream::once(Ok(OutgoingMessage::Error {
-                    description: "Since Isobar was initially started with --headless, all subsequent commands must be --headless".into()
+                return self.send_responses(outgoing, stream::once(Ok(OutgoingMessage::Error {
+                    description: "Since Xray was initially started with --headless, all subsequent commands must be --headless".into()
                 })));
             }
             (false, true) => {
-                return self.send_response(outgoing, stream::once(Ok(OutgoingMessage::Error {
-                    description: "Since Isobar was initially started without --headless, no subsequent commands may be --headless".into()
+                return self.send_responses(outgoing, stream::once(Ok(OutgoingMessage::Error {
+                    description: "Since Xray was initially started without --headless, no subsequent commands may be --headless".into()
                 })));
             }
             _ => {}
@@ -117,7 +117,7 @@ impl Server {
         let responses = stream::once(Ok(OutgoingMessage::Ok)).chain(report_input_errors(
             incoming.map(move |message| server.handle_app_message(message)),
         ));
-        self.send_response(outgoing, responses);
+        self.send_responses(outgoing, responses);
     }
 
     pub fn start_window<O, I>(&self, outgoing: O, incoming: I, window_id: WindowId, height: f64)
@@ -178,7 +178,7 @@ impl Server {
 
         let roots = paths
             .iter()
-            .map(|path| Box::new(fs::Tree::new(path).unwrap()) as Box<isobar_core::fs::Tree>)
+            .map(|path| Box::new(fs::Tree::new(path).unwrap()) as Box<xray_core::fs::Tree>)
             .collect();
         self.app.open_workspace(roots);
         Ok(())
@@ -189,15 +189,15 @@ impl Server {
         let listener = TcpListener::bind(&local_addr, &self.reactor)
             .map_err(|_| "Error binding address".to_owned())?;
         let reactor = self.reactor.clone();
-        let app = self.app.locne();
-        let handle_icoming = listener
+        let app = self.app.clone();
+        let handle_incoming = listener
             .incoming()
             .map_err(|_| eprintln!("Error accepting incoming connection"))
             .for_each(move |(socket, _)| {
                 socket.set_nodelay(true).unwrap();
                 Ok(())
             });
-        self.reactor.spawn(handle_icoming);
+        self.reactor.spawn(handle_incoming);
         Ok(())
     }
 
@@ -217,7 +217,7 @@ impl Server {
             outgoing
                 .send_all(responses.map_err(|_| unreachable!()))
                 .then(|_| Ok(())),
-        );;
+        );
     }
 }
 
