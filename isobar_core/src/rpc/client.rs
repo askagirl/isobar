@@ -34,15 +34,13 @@ struct ConnectionState {
 
 impl<T: server::Service> Service<T> {
     pub fn state(&self) -> Option<T::State> {
-        let state = self.connection.upgrade().and_then(|connection| {
+        self.connection.upgrade().and_then(|connection| {
             let connection = connection.borrow();
             connection
                 .client_states
                 .get(&self.id)
                 .map(|state| deserialize(&state.initial).unwrap())
-        });
-
-        state
+        })
     }
 
     pub fn updates(&self) -> Option<Box<Stream<Item = T::Update, Error = ()>>> {
@@ -105,7 +103,7 @@ impl<T: server::Service> Drop for Service<T> {
             connection.client_states.get_mut(&self.id).map(|state| {
                 if state.updates_rx.is_none() {
                     let (updates_tx, updates_rx) = unsync::mpsc::unbounded();
-                    state.updates_tx = updates_rx;
+                    state.updates_tx = updates_tx;
                     state.updates_rx = Some(updates_rx);
                 }
 
@@ -136,7 +134,7 @@ impl Connection {
                     (connection, root_service)
                 })
             }
-            Ok((None, _)) => Err(format!("Connection was interrupted during handshake")),
+            Ok((None, _)) => Err("Connection was interrupted during handshake".to_string()),
             Err((error, _)) => Err(format!("{}", error)),
         }))
     }
