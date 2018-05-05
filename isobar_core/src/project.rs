@@ -323,9 +323,9 @@ mod tests {
         assert_eq!(
             summarize_results(&observer.get()),
             Some(vec![
-                ("/Users/someone/tree/root-2/subdir-2/file-3", "root-2/subdir-2/file-3", vec![12, 13, 14, 19]),
-                ("/Users/someone/tree/root-2/subdir-2/file-4", "root-2/subdir-2/file-4", vec![12, 13, 14, 19]),
-                ("/Users/someone/tree/root-1/subdir-1/file-2", "root-1/subdir-1/file-2", vec![12, 13, 14, 26]),
+                ("/Users/someone/tree/root-2/subdir-2/file-3", "root-2/subdir-2/file-3", vec![7, 8, 9, 14]),
+                ("/Users/someone/tree/root-2/subdir-2/file-4", "root-2/subdir-2/file-4", vec![7, 8, 9, 14]),
+                ("/Users/someone/tree/root-1/subdir-1/file-2", "root-1/subdir-1/file-2", vec![7, 8, 9, 21]),
             ])
         );
     }
@@ -367,7 +367,7 @@ mod tests {
                 ("/Users/someone/bar/subdir-b/subdir-2/file-3", "bar/subdir-b/subdir-2/file-3", vec![0, 1, 2]),
                 ("/Users/someone/foo/subdir-a/subdir-1/file-1", "foo/subdir-a/subdir-1/file-1", vec![6, 11, 18]),
             ])
-        )
+        );
     }
 
     fn summarize_results(results: &PathSearchStatus) -> Option<Vec<(&str, &str, Vec<usize>)>> {
