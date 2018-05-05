@@ -142,7 +142,7 @@ mod tests {
                     .children
                     .read()
                     .iter()
-                    .map(|ref entry| entry.name().to_string_lossy().into_onwed())
+                    .map(|ref entry| entry.name().to_string_lossy().into_owned())
                     .collect(),
                 _ => panic!(),
             }

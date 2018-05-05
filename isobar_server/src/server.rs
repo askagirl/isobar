@@ -9,12 +9,12 @@ use std::rc::Rc;
 use tokio_core::net::{TcpListener, TcpStream};
 use tokio_core::reactor;
 use tokio_io::AsyncRead;
-use xray_core::{self, App, WindowId};
-use xray_core::app::AppUpdate;
+use isobar_core::{self, App, WindowId};
+use isobar_core::app::AppUpdate;
 
 #[derive(Clone)]
 pub struct Server {
-    app: xray_core::App,
+    app: isobar_core::App,
     reactor: reactor::Handle,
 }
 
@@ -102,12 +102,12 @@ impl Server {
         match (self.app.headless(), headless) {
             (true, false) => {
                 return self.send_responses(outgoing, stream::once(Ok(OutgoingMessage::Error {
-                    description: "Since Xray was initially started with --headless, all subsequent commands must be --headless".into()
+                    description: "Since Isobar was initially started with --headless, all subsequent commands must be --headless".into()
                 })));
             }
             (false, true) => {
                 return self.send_responses(outgoing, stream::once(Ok(OutgoingMessage::Error {
-                    description: "Since Xray was initially started without --headless, no subsequent commands may be --headless".into()
+                    description: "Since Isobar was initially started without --headless, no subsequent commands may be --headless".into()
                 })));
             }
             _ => {}
@@ -178,7 +178,7 @@ impl Server {
 
         let roots = paths
             .iter()
-            .map(|path| Box::new(fs::Tree::new(path).unwrap()) as Box<xray_core::fs::Tree>)
+            .map(|path| Box::new(fs::Tree::new(path).unwrap()) as Box<isobar_core::fs::Tree>)
             .collect();
         self.app.open_workspace(roots);
         Ok(())
