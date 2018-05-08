@@ -13,7 +13,7 @@ where
     {
         struct TakeOne<'a, S: 'a>(&'a mut S);
 
-        impl<'a S: 'a + Stream> Future for TakeOne<'a, S> {
+        impl<'a, S: 'a + Stream> Future for TakeOne<'a, S> {
             type Item = Option<S::Item>;
             type Error = S::Error;
 
