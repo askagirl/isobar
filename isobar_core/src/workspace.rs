@@ -52,7 +52,7 @@ impl Workspace {
     }
 
     fn project(&self) -> Ref<Project> {
-        Ref::map(self.0.borrow(), |state| state.project)
+        Ref::map(self.0.borrow(), |state| state.project.as_ref())
     }
 }
 
