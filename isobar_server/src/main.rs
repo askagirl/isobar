@@ -8,6 +8,7 @@ extern crate futures;
 extern crate futures_cpupool;
 extern crate ignore;
 extern crate serde;
+extern crate parking_lot;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
