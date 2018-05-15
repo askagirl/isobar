@@ -35,6 +35,7 @@ pub use app::{App, WindowId};
 use futures::future::{Executor, Future};
 use std::cell::RefCell;
 use std::rc::Rc;
+pub use never::Never;
 pub use window::{ViewId, WindowUpdate};
 
 pub type ForegroundExecutor = Rc<Executor<Box<Future<Item = (), Error = ()> + 'static>>>;
