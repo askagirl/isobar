@@ -12,12 +12,12 @@ use std::rc::Rc;
 use tokio_core::net::{TcpListener, TcpStream};
 use tokio_core::reactor;
 use tokio_io::codec;
-use xray_core::app::Command;
-use xray_core::{self, App, Never, WindowId};
+use isobar_core::app::Command;
+use isobar_core::{self, App, Never, WindowId};
 
 #[derive(Clone)]
 pub struct Server {
-    app: Rc<RefCell<xray_core::App>>,
+    app: Rc<RefCell<isobar_core::App>>,
     reactor: reactor::Handle,
 }
 

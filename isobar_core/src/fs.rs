@@ -1,4 +1,4 @@
-use futures::{ Async, Future, Stream};
+use futures::{Async, Future, Stream};
 use notify_cell::NotifyCell;
 use parking_lot::RwLock;
 use rpc::{client, server};
@@ -291,7 +291,7 @@ pub(crate) mod tests {
     use never::Never;
     use notify_cell::NotifyCell;
     use rpc;
-    use std::collection::HashMap;
+    use std::collections::HashMap;
     use std::path::PathBuf;
     use stream_ext::StreamExt;
     use tokio_core::reactor;
@@ -377,7 +377,7 @@ pub(crate) mod tests {
         pub populated: NotifyCell<bool>,
     }
 
-    pub struct TestFileProvider(Rc<RefCell<TestFileProvider>>);
+    pub struct TestFileProvider(Rc<RefCell<TestFileProviderState>>);
 
     struct TestFileProviderState {
         next_file_id: FileId,
@@ -403,7 +403,7 @@ pub(crate) mod tests {
             }
         }
 
-        pub fn from_json<T: Into<PathBuf>>(paths: T, json: serde_json::Value) -> Self {
+        pub fn from_json<T: Into<PathBuf>>(path: T, json: serde_json::Value) -> Self {
             let path = path.into();
             let root = Entry::from_json(path.file_name().unwrap(), &json);
             Self::new(path, root)
@@ -500,13 +500,13 @@ pub(crate) mod tests {
                 TestFile(Rc::new(RefCell::new(TestFileState {
                     id: file_id,
                     content: content.into(),
-                })))
-            )
+                }))),
+            );
         }
     }
 
     impl FileProvider for TestFileProvider {
-        fn open(&self, path: &Path) -> Box<Future<Item = Box<Fiel>, Error = io::Error>> {
+        fn open(&self, path: &Path) -> Box<Future<Item = Box<File>, Error = io::Error>> {
             let path = path.to_owned();
             let state = self.0.clone();
             Box::new(NextTick::new().then(move |_| {
