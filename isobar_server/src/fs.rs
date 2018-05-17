@@ -166,7 +166,7 @@ impl isobar_fs::File for File {
         let (tx, rx) = futures::sync::oneshot::channel();
         let file = self.file.clone();
         thread::spawn(move || {
-            fn read(file &fs::File) -> Result<String, io::Error> {
+            fn read(file: &fs::File) -> Result<String, io::Error> {
                 let mut buf_reader = io::BufReader::new(file);
                 let mut contents = String::new();
                 buf_reader.read_to_string(&mut contents)?;
