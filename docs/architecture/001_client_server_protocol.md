@@ -4,7 +4,7 @@ Isobar is organized around a client/server architecture, with all the applicatio
 
 ## Major application components
 
-![Major components](../images/client_server_component.png)
+![Major components](../images/client_server_components.png)
 
 All application logic is controlled by a signle server that listens on a domain socket located at `ATOM_SOCKET_PATH`. We connect to the server with three different types of clients:
 

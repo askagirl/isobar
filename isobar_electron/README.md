@@ -1,4 +1,6 @@
-# Isobar Electron Shell
+# Isobar Electron
+
+This is the front-end of the desktop application. It spawns an instance of `isobar_server`, where the majority of application logic resides, and communicates with it over a domain socket.
 
 ## Building and running
 
