@@ -150,7 +150,7 @@ All code related to Isobar should live in this repository, but intra-repository 
 
 ### Community SLA
 
-Well-formulated PRs and issues will reive some form of response by the end of next business day. If this interferes with our ability to learn, we revisit.
+Well-formulated PRs and issues will reive some form of response by the end of next business day. If this interferes with our ability to learn, we'll revisit.
 
 ## Contributing
 
