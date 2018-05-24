@@ -3,4 +3,5 @@ members = [
     "isobar_core",
     "isobar_server",
     "isobar_cli",
+    "isobar_wasm",
 ]
