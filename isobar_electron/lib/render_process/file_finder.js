@@ -62,7 +62,7 @@ module.exports = class FileFinder extends React.Component {
         $ref: (inputNode) => this.queryInput = inputNode,
         value: this.props.query,
         onChange: this.didChangeQuery,
-        onKeyDown: this.onKeyDown,
+        onKeyDown: this.didKeyDown,
       }),
       $("label", {},
         $("input", {
@@ -115,7 +115,7 @@ module.exports = class FileFinder extends React.Component {
   didChangeIncludeIgnored(event) {
     this.props.dispatch({
       type: "UpdateIncludeIgnored",
-      includeIgnored: event.target.checked
+      include_ignored: event.target.checked
     });
   }
 
