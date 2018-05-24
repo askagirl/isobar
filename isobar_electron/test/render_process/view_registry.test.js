@@ -127,5 +127,5 @@ suite("ViewRegistry", () => {
     registry.update({ updated: [], removed: [], focused: 2 });
     assert.doesNotThrow(() => registry.watchFocus(1));
     assert.deepEqual(focusRequests, [1, 1, 2, 2]);
-  })
+  });
 });
