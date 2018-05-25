@@ -1,5 +1,8 @@
 #!/bin/bash
 
-cargo build "$@" &&
-cd isobar_electron &&
-npm install
+set -e
+
+cd isobar_server; cargo build "$@"; cd -
+cd isobar_cli; cargo build "$@"; cd -
+cd isobar_wasm; script/build; cd -
+cd isobar_electron; npm install; cd -
