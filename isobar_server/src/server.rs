@@ -105,12 +105,12 @@ impl Server {
         match (self.app.borrow().headless(), headless) {
             (true, false) => {
                 return self.send_outgoing(outgoing, stream::once(Ok(OutgoingMessage::Error {
-                    description: "Since Xray was initially started with --headless, all subsequent commands must be --headless".into()
+                    description: "Since Isobar was initially started with --headless, all subsequent commands must be --headless".into()
                 })));
             }
             (false, true) => {
                 return self.send_outgoing(outgoing, stream::once(Ok(OutgoingMessage::Error {
-                    description: "Since Xray was initially started without --headless, no subsequent commands may be --headless".into()
+                    description: "Since Isobar was initially started without --headless, no subsequent commands may be --headless".into()
                 })));
             }
             _ => {}

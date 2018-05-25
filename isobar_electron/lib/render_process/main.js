@@ -1,13 +1,13 @@
 process.env.NODE_ENV = "production";
 
-const App = require("./app");
-const FileFinder = require("./file_finder");
+const App = require("isobar_web/lib/app");
+const FileFinder = require("isobar_web/lib/file_finder");
 const QueryString = require("querystring");
 const React = require("react");
 const ReactDOM = require("react-dom");
-const ViewRegistry = require("./view_registry");
-const Workspace= require("./workspace");
-const TextEditorView = require("./text_editor/text_editor");
+const ViewRegistry = require("isobar_web/lib/view_registry");
+const Workspace= require("isobar_web/lib/workspace");
+const TextEditorView = require("isobar_web/lib/text_editor/text_editor");
 const IsobarClient = require("../shared/isobar_client");
 const $ = React.createElement;
 
