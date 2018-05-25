@@ -118,24 +118,6 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn test_creating_service_in_async_response() {
-        let mut reactor = reactor::Core::new().unwrap();
-        let service = TestService::new(Rc::new(TestModel::new(42)));
-        // Throttle connection to ensure both the response *and* the new service are sent together.
-        let client = connect_throttled(&mut reactor, service, Some(100));
-        let request_future = client.request(TestRequest::CreateServiceAsync);
-        let response = reactor.run(request_future).unwrap();
-        match response {
-            TestServiceResponse::ServiceCreated(id) => {
-                client
-                    .take_service::<TestService>(id)
-                    .expect("Service to exist by the time we receive a response");
-            }
-            _ => panic!(),
-        }
-    }
-
-    #[test]
     fn test_add_service_on_init_or_update() {
         struct NoopService {
             init_called: bool,
