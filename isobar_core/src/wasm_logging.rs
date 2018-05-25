@@ -1,7 +1,7 @@
-use wasm_bindgen;
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen(js_namespace = console)]
-extern crate "C" {
+extern "C" {
     pub fn log(s: &str);
     pub fn error(s: &str);
 }
@@ -12,6 +12,6 @@ macro_rules! println {
 }
 
 #[macro_export]
-macro_rules! eprintln! {
+macro_rules! eprintln {
     ($($arg:tt)*) => ($crate::wasm_logging::error(&::std::fmt::format(format_args!($($arg)*))));
 }
