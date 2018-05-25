@@ -1,6 +1,5 @@
 import assert from "assert";
-import isobarPromise from "../lib/main"
-import { JsSink } from "../lib/support"
+import { isobar as isobarPromise, JsSink } from "../lib/main";
 
 suite("Server", () => {
   let isobar;
