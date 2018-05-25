@@ -2,7 +2,7 @@ import { React, ReactDOM, App, buildViewRegistry } from "isobar_web"
 import IsobarClient from "./client";
 const $ = React.createElement;
 
-const client = new IsobarClient(new Worker("server.js"));
+const client = new IsobarClient(new Worker("worker.js"));
 const websocketURL = "ws://127.0.0.1:9999";
 client.sendMessage({ type: "ConnectToWebsocket", url: websocketURL });
 
