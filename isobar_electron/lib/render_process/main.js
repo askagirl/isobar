@@ -1,10 +1,8 @@
 process.env.NODE_ENV = "production";
 
-const { App, buildViewRegistry } = require("isobar_web");
+const { React, ReactDOM, App, buildViewRegistry } = require("isobar_web");
 const IsobarClient = require("../shared/isobar_client");
 const QueryString = require("querystring");
-const React = require("react");
-const ReactDOM = require("react-dom");
 const $ = React.createElement;
 
 async function start() {

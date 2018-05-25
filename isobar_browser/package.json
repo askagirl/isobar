@@ -2,7 +2,8 @@
   "name": "isobar_browser",
   "license": "MIT",
   "dependencies": {
-    "isobar_wasm": "../isobar_wasm"
+    "isobar_wasm": "../isobar_wasm",
+    "isobar_web": "../isobar_web"
   },
   "devDependencies": {
     "express": "^4.16.3",
