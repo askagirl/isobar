@@ -514,7 +514,6 @@ pub(crate) mod tests {
             path: &cross_platform::Path,
         ) -> Box<Future<Item = Box<File>, Error = io::Error>> {
             let path = path.to_path_buf();
-            let path = path.to_owned();
             let state = self.0.clone();
             Box::new(NextTick::new().then(move |_| {
                 let state = state.borrow();

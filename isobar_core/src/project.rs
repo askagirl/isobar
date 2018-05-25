@@ -59,7 +59,7 @@ pub struct RpcState {
 pub enum RpcRequest {
     OpenBuffer {
         tree_id: TreeId,
-        relative_path: cross_platfrom::Path,
+        relative_path: cross_platform::Path,
     },
 }
 
@@ -510,7 +510,7 @@ impl PathSearch {
                                 if self.roots.len() == 1 || i != 0 {
                                     relative_path.push(child.name());
                                 }
-                                display_path.extend[child.name_chars()];
+                                display_path.extend(child.name_chars());
                             }
                             let child = &children[child_index];
                             relative_path.push(child.name());
@@ -621,7 +621,7 @@ mod tests {
         let tree_id = 0;
         let relative_path = cross_platform::Path::from("subdir-a/subdir-1/bar");
         file_provider.write_sync(
-            project.resolve_path(tree_id, relative_path).unwrap(),
+            project.resolve_path(tree_id, &relative_path).unwrap(),
             "abc",
         );
 
@@ -747,7 +747,7 @@ mod tests {
 
         let absolute_path = local_project
             .borrow()
-            .resolve_path(tree_id, &relative_path)
+            .resolve_path(tree_id, relative_path)
             .unwrap();
         file_provider.write_sync(absolute_path, "abc");
 
