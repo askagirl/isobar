@@ -16,7 +16,6 @@ extern crate tokio_core;
 extern crate tokio_io;
 extern crate tokio_process;
 extern crate tokio_uds;
-extern crate websocket;
 extern crate isobar_core;
 
 use std::env;
