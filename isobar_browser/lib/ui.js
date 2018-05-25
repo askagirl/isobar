@@ -1,7 +1,10 @@
 import IsobarClient from "./client";
 
-const server = new Worker("server.js");
-const client = new IsobarClient(server);
+const client = new IsobarClient(new Worker("server.js"));
+
 const websocketURL = "ws://127.0.0.1:9999";
 client.sendMessage({ type: "ConnectToWebsocket", url: websocketURL });
-client.onMessage(message => {});
+
+client.onMessage(message => {
+  console.log("message", message);
+});

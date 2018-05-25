@@ -5,7 +5,7 @@ export default class IsobarClient {
 
   onMessage(callback) {
     this.worker.addEventListener("message", message => {
-      callback(JSON.parse(message));
+      callback(message);
     });
   }
 
