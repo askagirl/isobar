@@ -1,0 +1,11 @@
+{
+  "name": "isobar_browser",
+  "license": "MIT",
+  "dependencies": {
+    "isobar_wasm": "../isobar_wasm"
+  },
+  "devDependencies": {
+    "webpack": "^4.6.0",
+    "webpack-cli": "^2.0.15"
+  }
+}
