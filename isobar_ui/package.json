@@ -1,5 +1,5 @@
 {
-  "name": "isobar_web",
+  "name": "isobar_ui",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {

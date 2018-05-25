@@ -9,7 +9,7 @@
     "itest": "electron-mocha --ui=tdd --renderer --interactive test/**/*.test.js"
   },
   "dependencies": {
-    "isobar_web": "../isobar_web"
+    "isobar_ui": "../isobar_ui"
   },
   "devDependencies": {
     "electron": "2.0.0-beta.7"

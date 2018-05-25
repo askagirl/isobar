@@ -1,6 +1,6 @@
 process.env.NODE_ENV = "production";
 
-const { React, ReactDOM, App, buildViewRegistry } = require("isobar_web");
+const { React, ReactDOM, App, buildViewRegistry } = require("isobar_ui");
 const IsobarClient = require("../shared/isobar_client");
 const QueryString = require("querystring");
 const $ = React.createElement;

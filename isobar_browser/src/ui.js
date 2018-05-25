@@ -1,4 +1,4 @@
-import { React, ReactDOM, App, buildViewRegistry } from "isobar_web"
+import { React, ReactDOM, App, buildViewRegistry } from "isobar_ui"
 import IsobarClient from "./client";
 const $ = React.createElement;
 
