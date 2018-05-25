@@ -6,3 +6,4 @@ cd isobar_server; cargo build "$@"; cd -
 cd isobar_cli; cargo build "$@"; cd -
 cd isobar_wasm; script/build; cd -
 cd isobar_electron; npm install; cd -
+cd isobar_browser; script/build; cd -
