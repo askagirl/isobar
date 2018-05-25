@@ -1,3 +1,6 @@
 #!/bin/bash
 
+set -e
+
+cd isobar_core
 cargo bench "$@"
