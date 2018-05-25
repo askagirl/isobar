@@ -167,7 +167,7 @@ impl Notify for NotifyHandle {
             let mut state = state.borrow_mut();
             if !state.pending.contains_key(&id) {
                 if let Some(task) = state.futures.get(&id).cloned() {
-                    state.peding.insert(id, task);
+                    state.pending.insert(id, task);
                     if state.pending.len() == 1 {
                         notify_on_next_tick(self.clone());
                     }
@@ -251,9 +251,9 @@ impl Sink for JsSink {
 #[wasm_bindgen]
 impl Server {
     pub fn new() -> Self {
-        let foregound_executor = Rc::new(Executor::new());
+        let foreground_executor = Rc::new(Executor::new());
         // TODO: use a requestIdleCallback-based executor here instead.
-        let background_executor = foregound_executor.clone();
+        let background_executor = foreground_executor.clone();
         Server {
             app: App::new(
                 false,
@@ -320,7 +320,7 @@ impl Server {
             Err(_) => {
                 let error = stream::once(Ok(OutgoingMessage::Error {
                     description: format!("No window exists for id {}", window_id),
-                })).map_err(|message| serde_json::to_vec(&message).unwrap());
+                })).map(|message| serde_json::to_vec(&message).unwrap());
                 self.executor
                     .execute(Box::new(outgoing.send_all(error).then(|_| Ok(()))))
                     .unwrap();
