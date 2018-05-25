@@ -2,7 +2,7 @@
 
 set -e
 
-cd isobar_electron; yarn install; cd -
+cd isobar_electron; yarn install --check-files; cd -
 cd isobar_ui; yarn install; cd -
 cd isobar_cli; cargo build "$@"; cd -
 cd isobar_server; cargo build "$@"; cd -
