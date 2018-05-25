@@ -8,7 +8,7 @@ use isobar_core::{WindowId, ViewId, WindowUpdate};
 pub enum IncomingMessage {
     StartApp,
     StartCli { headless: bool },
-    Listen {
+    TcpListen {
         port: u16
     },
     StartWindow {
