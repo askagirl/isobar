@@ -11,8 +11,8 @@ This assumes `isobar_electron` is cloned as part of the Isobar repository and th
 cd isobar_electron
 
 # Install and build dependencies:
-npm install
+yarn install
 
 # Launch Electron:
-npm start
+yarn start
 ```
