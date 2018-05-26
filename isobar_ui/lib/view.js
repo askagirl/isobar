@@ -27,7 +27,7 @@ class View extends React.Component {
 
   componentWillUnmount() {
     if (this.disposePropsWatch) this.disposePropsWatch();
-    if (this.disposePropsWatch) this.disposeFocusWatch();
+    if (this.disposeFocusWatch) this.disposeFocusWatch();
   }
 
   render() {
@@ -50,7 +50,7 @@ class View extends React.Component {
     if (this.disposePropsWatch) this.disposePropsWatch();
     if (this.disposeFocusWatch) this.disposeFocusWatch();
     this.disposePropsWatch = context.viewRegistry.watchProps(props.id, () => {
-      this.setState({ version: this.state.version + 1});
+      this.setState({ version: this.state.version + 1 });
     });
     this.disposeFocusWatch = context.viewRegistry.watchFocus(props.id, () => {
       if (this.component.focus) this.component.focus();

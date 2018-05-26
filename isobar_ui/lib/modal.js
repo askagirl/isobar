@@ -9,7 +9,8 @@ const Root = styled("div", {
   left: 0,
   right: 0,
   width: "min-content",
-  margin: "auto"
+  margin: "auto",
+  outline: "none"
 });
 
 module.exports = class Modal extends React.Component {
@@ -23,7 +24,7 @@ module.exports = class Modal extends React.Component {
 
   componentWillUnmount() {
     const element = ReactDOM.findDOMNode(this);
-    if (element.containts(document.activeElement)) {
+    if (element.contains(document.activeElement)) {
       this.previouslyFocusedElement.focus();
       this.previouslyFocusedElement = null
     }

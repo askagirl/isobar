@@ -5,14 +5,15 @@ use std::ffi::OsString;
 use std::fs;
 use std::io::{self, Read};
 use std::os::unix::fs::MetadataExt;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::sync::Arc;
 use std::thread;
+use isobar_core::cross_platform;
 use isobar_core::fs as isobar_fs;
 use isobar_core::notify_cell::NotifyCell;
 
 pub struct Tree {
-    path: PathBuf,
+    path: cross_platform::Path,
     root: isobar_fs::Entry,
     updates: NotifyCell<()>,
     populated: NotifyCell<bool>,
@@ -29,7 +30,7 @@ impl Tree {
     pub fn new<T: Into<PathBuf>>(path: T) -> Result<Self, &'static str> {
         let path = path.into();
         let file_name = OsString::from(path.file_name().ok_or("Path must have a filename")?);
-        let root = isobar_fs::Entry::dir(file_name, false, false);
+        let root = isobar_fs::Entry::dir(file_name.into(), false, false);
         let updates = NotifyCell::new(());
         let populated = NotifyCell::new(false);
         Self::populate(
@@ -39,7 +40,7 @@ impl Tree {
             populated.clone(),
         );
         Ok(Self {
-            path,
+            path: cross_platform::Path::from(path.into_os_string()),
             root,
             updates,
             populated,
@@ -70,7 +71,7 @@ impl Tree {
 
                 if file_type.is_dir() {
                     let dir = isobar_fs::Entry::dir(
-                        OsString::from(file_name),
+                        file_name.into(),
                         file_type.is_symlink(),
                         entry.ignored(),
                     );
@@ -78,7 +79,7 @@ impl Tree {
                     stack.push(dir);
                 } else if file_type.is_file() {
                     let file = isobar_fs::Entry::file(
-                        OsString::from(file_name),
+                        file_name.into(),
                         file_type.is_symlink(),
                         entry.ignored(),
                     );
@@ -103,7 +104,7 @@ impl isobar_fs::Tree for Tree {
 }
 
 impl isobar_fs::LocalTree for Tree {
-    fn path(&self) -> &Path {
+    fn path(&self) -> &cross_platform::Path {
         &self.path
     }
 
@@ -129,8 +130,11 @@ impl FileProvider {
 }
 
 impl isobar_fs::FileProvider for FileProvider {
-    fn open(&self, path: &Path) -> Box<Future<Item = Box<isobar_fs::File>, Error = io::Error>> {
-        let path = path.to_owned();
+    fn open(
+        &self,
+        path: &cross_platform::Path,
+    ) -> Box<Future<Item = Box<isobar_fs::File>, Error = io::Error>> {
+        let path = path.to_path_buf();
         let (tx, rx) = futures::sync::oneshot::channel();
 
         thread::spawn(|| {

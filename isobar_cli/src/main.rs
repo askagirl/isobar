@@ -23,7 +23,7 @@ Usage:
 Options:
   -h --help              Show this screen.
   -H --headless          Start Isobar in headless mode.
-  -l --listen=<port>     Listen on specified port.
+  -l --listen=<port>     Listen for TCP connections on specified port.
   -c --connect=<address> Connect to the specific address.
 ";
 
@@ -35,7 +35,7 @@ enum ServerRequest {
     StartCLI { headless: bool },
     OpenWorkspace { paths: Vec<PathBuf> },
     ConnectToPeer { address: SocketAddr },
-    Listen { port: PortNumber },
+    TcpListen { port: PortNumber },
 }
 
 #[derive(Deserialize)]
@@ -116,7 +116,7 @@ fn launch() -> Result<(), String> {
     }
 
     if let Some(port) = args.flag_listen {
-        send_message(&mut socket, ServerRequest::Listen { port })?;
+        send_message(&mut socket, ServerRequest::TcpListen { port })?;
     }
 
     Ok(())

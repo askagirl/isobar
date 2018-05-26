@@ -22,7 +22,7 @@ module.exports = class Workspace extends React.Component {
   render() {
     let modal;
     if (this.props.modal) {
-      modal = $(Modal, null, $(View, { id: this.prosp.modal }));
+      modal = $(Modal, null, $(View, { id: this.props.modal }));
     }
 
     let centerItem
@@ -46,7 +46,7 @@ module.exports = class Workspace extends React.Component {
   }
 
   didKeyDown(event) {
-    if (event.metaKey) {
+    if (event.metaKey || event.ctrlKey) {
       if (event.key === 't') {
         this.props.dispatch({type: 'ToggleFileFinder'})
       }

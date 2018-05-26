@@ -1,5 +1,9 @@
 #!/bin/bash
 
-cargo build "$@" &&
-cd isobar_electron &&
-npm install
+set -e
+
+cd isobar_electron; yarn install --check-files; cd -
+cd isobar_ui; yarn install; cd -
+cd isobar_cli; cargo build "$@"; cd -
+cd isobar_server; cargo build "$@"; cd -
+cd isobar_browser; script/build; cd -
