@@ -64,7 +64,10 @@ class IsobarApplication {
       slashes: true
     }));
     this.windowsById.set(windowId, window);
-    window.on('closed', () => this.windowsById.delete(windowId));
+    window.on('closed', () => {
+      this.windowsById.delete(windowId);
+      this.isobarClient.sendMessage({type: 'CloseWindow', window_id: windowId});
+    })
   }
 }
 
