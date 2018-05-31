@@ -99,7 +99,6 @@ class TextEditor extends React.Component {
       },
       $(TextPlane, {
         showLocalCursors: this.state.showLocalCursors,
-        localReplicaId: this.props.local_replica_id,
         lineHeight: this.props.line_height,
         scrollTop: this.props.scroll_top,
         paddingLeft: 5,
