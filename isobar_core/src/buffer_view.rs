@@ -221,7 +221,7 @@ impl BufferView {
             let mut buffer = self.buffer.borrow_mut();
             // Ensure the supplied anchors are valid to preserve invariants.
             buffer.offset_for_anchor(&range.start)?;
-            buffer.offset_for_anchor(&range.end);
+            buffer.offset_for_anchor(&range.end)?;
             buffer.mutate_selections(self.selection_set_id, |_, selections| {
                 selections.clear();
                 selections.push(Selection {
@@ -232,7 +232,7 @@ impl BufferView {
                 });
             })?;
         }
-        self.autoscroll_to_cursor(false);
+        self.autoscroll_to_selection(true);
         self.updated();
         Ok(())
     }
@@ -1215,7 +1215,7 @@ mod tests {
     #[test]
     fn test_autoscroll() {
         let mut buffer = Buffer::new(0);
-        buffer.edit(0..0, "abc\ndef\nghi\njkl\nmno\npqr\nvwx\nyz");
+        buffer.edit(0..0, "abc\ndef\nghi\njkl\nmno\npqr\nstu\nvwx\nyz");
         let start = buffer.anchor_before_offset(0).unwrap();
         let end = buffer.anchor_before_offset(buffer.len()).unwrap();
         let max_point = buffer.max_point();
