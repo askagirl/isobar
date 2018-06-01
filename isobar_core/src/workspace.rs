@@ -306,7 +306,7 @@ impl DiscussionViewDelegate for WorkspaceView {
         self.open_buffer(
             workspace.project().open_buffer(anchor.buffer_id),
             Some(anchor.range.clone()),
-        )
+        );
     }
 }
 

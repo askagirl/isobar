@@ -296,7 +296,7 @@ impl<T: ?Sized> Clone for WeakViewHandle<T> {
 
 impl<T, U> CoerceUnsized<WeakViewHandle<U>> for WeakViewHandle<T>
 where
-    T: Unsize<T> + Sized,
+    T: Unsize<U> + ?Sized,
     U: ?Sized,
 {
 }
