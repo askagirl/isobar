@@ -6,11 +6,11 @@ Isobar is an experimental Electron-based text editor informed by what we've lear
 
 ## Updates
 
+* [June 4, 2018](./docs/updates/2018_06_04.md)
 * [May 28, 2018](./docs/updates/2018_05_28.md)
 * [May 21, 2018](./docs/updates/2018_05_21.md)
 * [May 14, 2018](./docs/updates/2018_05_14.md)
 * [May 7, 2018](./docs/updates/2018_05_07.md)
-* [April 30, 2018](./docs/updates/2018_04_30.md)
 * [Archives](./docs/updates/)
 
 ## Foundational priorities
