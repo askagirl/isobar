@@ -1,6 +1,32 @@
 # Live repositories
 
-A live repository captures
+## Overview
+
+An Isobar repository serves a similar role to a Git repository, which is to *persist* a history of changes and to *synchronize* changes between multiple working trees. Isobar repositories are actually designed to augment Git repositories, and they add support for fine-grained, operation-oriented version control.
+
+With Git, each working copy is periodically synchronized with a given branch via the manual pushing and pulling of commits. With Isobar multiple developers can share the state of a single working tree via a *sprout*. A sprout is similar to an ordinary Git branch, but changes are continuously synchronized to every replica that has that sprout checked out, without the need for manual conflict resolution.
+
+Sprouts offer a clean abstraction for transimitting the state of a coding session across multiple machines in real time. For example, a cloud-based service such as Code Climate could perform analysis on an active work tree as the code was being actively editing, inserting annotations that are anchored to logical positions in the source code and replicated back to the client and surface valuable information to the developer. Full write access means that a cloud-based service could also perform edits to code such as code formatting.
+
+Live branches also persist a fine-grained edit history at the level of individual keystrokes, and moment of this history can be identified by a unique version vector. This capability could be used to deploy a specific version of a codebase to an interactive development environment or staging server instantly, without the need to create and push a commit. While Git commits are a valuable tool for identifying important moments in the edit history and still serve as the backbone of asynchronous collaboration, continues persistence and the ability to associate a checkpoint with any moment in history means that "work-in-progress" commits should no longer be required in order to save and share the current state of a work tree. For certain workflows, especially for beginners, commiting could potentially be avoided entirely the without risk of losing history.
+
+## Using live repositories
+
+Isobar prefers to enable live repositories when possible to support advanced features and persist a fine-grained edit history, but live repositories are optional. They can't be supported in some rare circumstances when the user's machine is offline, and the user may explicitly disable then in order to avoid the storage and memory overhead of a fine-grained edit history and some occasional delays when attempting to edit files during repository updates. The space overhead should be low enough and the delays sufficiently brief and infrequent that the majority of users should have no issue leaving live repositories enabled.
+
+### Command line interface
+
+In the typical usage scenario, command-line interaction should not be required in order to use live work trees in Isobar, but covering it first will provide clarity to later sections of this document. All repository operations are performed through the `irepo` command, which communicates to the same server process as the `isobar` command but is intended for repository manipulation rather than opening files for editing. Like `git`, the `irepo` comamnd interprets its second argument as a subcommand.
+
+* `irepo init` Run this command in a directory to create an Isobar repository. Isobar will create a database file named `.isobar_repo` in the current directory and add an entry for it to the `.gitignore`. It will then populate the database based on the current state of the file system and create an anonymous live branch in which to store local edits.
+
+* `irepo remote add <name> <url>` This command registers a remote Isobar repository and enables the current repository to
+* `irepo share [[<remote>]/<name>]`
+* `irepo join [<remote>/]<name>`
+
+
+
+---------------------------------
 
 ## Live work trees
 
@@ -92,4 +118,3 @@ The actual value of such a feature is unclear. The primary purpose of branches i
 The author of the upstream branch could defer coordination with the authors downstream branches, however, creating an asymmetry which might be useful in some settings. For example, imagine a classroom setting in which a teacher is writing tests for a function and then asks students to write the function. Each student could create a branch based on the teacher's branch and attempt to write the function. Then the teacher could continue to make edits, calling the function with different arguments and asking students to re-run tests to discover whether they covered different edge cases.
 
 On a theoretical level, combining the fluidity of real-time collaboration with branching and merging and allowing changes to freely flow is intriguing. In practice however, it's unclear how this feature might be used.
-
