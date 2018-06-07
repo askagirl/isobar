@@ -673,7 +673,7 @@ impl Buffer {
     pub fn edit<'a, I, T>(&mut self, old_ranges: I, new_text: T) -> Vec<Arc<Operation>>
     where
         I: IntoIterator<Item = &'a Range<usize>>,
-        T: Into<Text>
+        T: Into<Text>,
     {
         let new_text = new_text.into();
         let new_text = if new_text.len() > 0 {
@@ -1046,24 +1046,24 @@ impl Buffer {
 
     fn splice_fragments<'a, I>(
         &mut self,
-        mut ranges: I,
+        mut old_ranges: I,
         new_text: Option<Arc<Text>>,
     ) -> Vec<Arc<Operation>>
     where
         I: Iterator<Item = &'a Range<usize>>,
     {
-        let mut cur_range = ranges.next();
+        let mut cur_range = old_ranges.next();
         if cur_range.is_none() {
             return Vec::new();
         }
 
         let replica_id = self.replica_id;
-        let mut ops = Vec::with_capacity(ranges.size_hint().0);
+        let mut ops = Vec::with_capacity(old_ranges.size_hint().0);
 
         let old_fragments = self.fragments.clone();
         let mut cursor = old_fragments.cursor();
         let mut new_fragments = Tree::new();
-        new_fragments.push(cursor.slice(
+        new_fragments.push_tree(cursor.slice(
             &CharacterCount(cur_range.as_ref().unwrap().start),
             SeekBias::Right,
         ));
@@ -1088,8 +1088,8 @@ impl Buffer {
             let mut new_split_tree =
                 splits_cursor.slice(&InsertionOffset(fragment.start_offset), SeekBias::Right);
 
-            // Find all splices that start or end within the current fragmnet. Then split the
-            // fragment and reassemble in it both trees accounting for the deleted and the newly
+            // Find all splices that start or end within the current fragment. Then, split the
+            // fragment and reassemble it in both trees accounting for the deleted and the newly
             // inserted text.
             while cur_range.map_or(false, |range| range.start < fragment_end) {
                 let range = cur_range.clone().unwrap();
@@ -1193,7 +1193,7 @@ impl Buffer {
                     end_id = None;
                     end_offset = None;
                     version_in_range = Version::new();
-                    cur_range = ranges.next();
+                    cur_range = old_ranges.next();
                     if cur_range.is_some() {
                         self.local_clock += 1;
                         self.lamport_clock += 1;
@@ -1254,7 +1254,7 @@ impl Buffer {
                             end_offset = None;
                             version_in_range = Version::new();
 
-                            cur_range = ranges.next();
+                            cur_range = old_ranges.next();
                             if cur_range.is_some() {
                                 self.local_clock += 1;
                                 self.lamport_clock += 1;
@@ -1279,9 +1279,9 @@ impl Buffer {
         }
 
         // Handle range that is at the end of the buffer if it exists. There should never be
-        // multiple beacuse ranges must be disjoint.
+        // multiple because ranges must be disjoint.
         if cur_range.is_some() {
-            debug_assert_eq!(ranges.next(), None);
+            debug_assert_eq!(old_ranges.next(), None);
             let local_timestamp = self.local_clock;
             let lamport_timestamp = self.lamport_clock;
             let id = EditId {
