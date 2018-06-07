@@ -1,11 +1,24 @@
-// type ReplicaId = UUID;
+use buffer;
+use std::cell::RefCell;
+use std::cmp::Ordering;
+use std::collections::{BTreeMap, BTreeSet, HashMap};
+use std::rc::Rc;
+use uuid::Uuid;
+
+type ReplicaId = Uuid;
+type LamportTimestamp = usize;
 type LocalTimestamp = usize;
 type LocalEpochId = usize;
+type NodeId = OperationId;
+
+struct CommitSha {
+    bytes: [u8; 20],
+}
 
 // A unique state in the repository is defined by an epoch and a state vector relative to the start
 // of that epoch. The timestamp is assumed to be 0 for any replica id that does not have an entry
 // in the map, which indicates it did not produce any operations in that epoch.
-type State = {EpochId, HashMap<ReplicaId, LocalTimestamp>};
+type State = (EpochId, HashMap<ReplicaId, LocalTimestamp>);
 
 // An Isobar repository can be thought of in loose analogy to a git repository. It records a
 // fine-grained conflict-free edit history for one or more work trees. An Isobar repository can
@@ -95,7 +108,7 @@ enum OperationPayload {
         lamport_timestamp: LamportTimestamp,
     },
     DeleteNode {
-        node_id: NodeId
+        node_id: NodeId,
     },
     UpdateTextNode {
         node_id: NodeId,
@@ -104,7 +117,7 @@ enum OperationPayload {
     UpdateBinaryNode {
         node_id: NodeId,
         lamport_timestamp: LamportTimestamp,
-    }
+    },
 }
 
 // All operations need an id, which describes the tree to which the operation should be applied,
@@ -122,10 +135,10 @@ struct Register<T> {
     // given WorkTreeState is considered to contain the value of the reigster for that state.
     // Eventually we can persist older entries to the database and only keep a small subset in
     // memory.
-    entries: Vec<RegisterEntry>,
+    entries: BTreeSet<RegisterEntry<T>>,
 }
 
-// The a register entry associates the desired value with an operation id, which identifies the
+// The register entry associates the desired value with an operation id, which identifies the
 // replica that produced the value and the local time it was produced, along with a lamport
 // timestamp to enforce causal ordering. Entries should be sorted descending by lamport timestamp,
 // and ties can be broken with the replica id of the entry's id.
@@ -154,7 +167,7 @@ enum NodeContent {
         contents: buffer::Buffer,
     },
     BinaryFile {
-        Register<vec<u8>>,
+        bytes: Register<Vec<u8>>,
     }
 }
 

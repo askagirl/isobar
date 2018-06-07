@@ -18,6 +18,7 @@ extern crate smallvec;
 extern crate tokio_core;
 #[cfg(test)]
 extern crate tokio_timer;
+extern crate uuid;
 #[cfg(target_arch = "wasm32")]
 extern crate wasm_bindgen;
 
@@ -39,6 +40,7 @@ mod file_finder;
 mod fuzzy;
 mod movement;
 mod never;
+mod repository;
 mod project;
 #[cfg(test)]
 mod stream_ext;
