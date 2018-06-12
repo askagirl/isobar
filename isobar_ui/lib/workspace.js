@@ -4,6 +4,7 @@ const ReactDOM = require("react-dom");
 const { styled } = require("styletron-react");
 const Modal = require("./modal");
 const View = require("./view");
+const { ActionContext, Action } = require("./keymap");
 const $ = React.createElement;
 
 const Root = styled("div", {
@@ -31,7 +32,7 @@ const PaneInner = styled("div", {
   top: 0,
   bottom: 0,
   right: 0
-})
+});
 
 const BackgroundTip = styled("div", {
   fontFamily: "sans-serif",
@@ -44,7 +45,6 @@ const BackgroundTip = styled("div", {
 class Workspace extends React.Component {
   constructor() {
     super();
-    this.didKeyDown = this.didKeyDown.bind(this);
   }
 
   render() {
@@ -68,29 +68,22 @@ class Workspace extends React.Component {
     return $(
       Root,
       {
-        tabIndex: -1,
-        onKeyDownCapture: this.didKeyDown
+        tabIndex: -1
       },
-      leftPanel,
-      $(Pane, null, $(PaneInner, null, centerItem)),
-      modal
+      $(
+        ActionContext,
+        { context: "Workspace" },
+        leftPanel,
+        $(Pane, null, $(PaneInner, null, centerItem)),
+        modal,
+        $(Action, { type: "ToggleFileFinder" }),
+        $(Action, { type: "SaveActionBuffer" })
+      )
     );
   }
 
   componentDidMount() {
     ReactDOM.findDOMNode(this).focus();
-  }
-
-  didKeyDown(event) {
-    if (event.metaKey || event.ctrlKey) {
-      if (event.key === "t") {
-        this.props.dispatch({ type: "ToggleFileFinder" })
-        event.stopPropagation();
-      } else if (envet.key === "s") {
-        this.props.dispatch({ type: "SaveActiveBuffer" });
-        event.stopPropagation();
-      }
-    }
   }
 }
 
