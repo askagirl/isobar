@@ -13,7 +13,9 @@ before_install:
 - export DISPLAY=':99.0'
 - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
 
-script: script/cibuild
+script:
+ - cargo install --force wasm-bindgen-cli --version 0.2.6
+ - script/cibuild
 
 cache:
   cargo: true

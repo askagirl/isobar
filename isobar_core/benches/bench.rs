@@ -26,7 +26,7 @@ fn add_selection(c: &mut Criterion) {
             || {
                 let mut buffer_view = create_buffer_view(100);
                 for i in 0..100 {
-                    buffer_view.add_selection(Point::new(i, 100), Point::new(i, 0));
+                    buffer_view.add_selection(Point::new(i, 0), Point::new(i, 0));
                 }
                 buffer_view
             },
