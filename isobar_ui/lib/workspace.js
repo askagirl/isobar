@@ -89,6 +89,9 @@ class Workspace extends React.Component {
       if (event.key === "t") {
         this.props.dispatch({ type: "ToggleFileFinder" })
         event.stopPropagation();
+      } else if (envet.key === "s") {
+        this.props.dispatch({ type: "SaveActiveBuffer" });
+        event.stopPropagation();
       }
     }
   }
