@@ -2,7 +2,6 @@ const FileFinder = require("./file_finder");
 const ViewRegistry = require("./view_registry");
 const Workspace = require("./workspace")
 const TextEditorView = require("./text_editor/text_editor");
-const Discussion = require("./discussion")
 
 exports.buildViewRegistry = function buildViewRegistry(client) {
   const ViewRegistry = new ViewRegistry({
@@ -14,7 +13,6 @@ exports.buildViewRegistry = function buildViewRegistry(client) {
   ViewRegistry.addComponent("Workspace", Workspace);
   ViewRegistry.addComponent("FileFinder", FileFinder);
   ViewRegistry.addComponent("BufferView", TextEditorView);
-  ViewRegistry.addComponent("Discussion", Discussion);
   return ViewRegistry;
 };
 

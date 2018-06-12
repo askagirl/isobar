@@ -2636,7 +2636,7 @@ mod tests {
     #[test]
     fn test_snapshot() {
         let mut buffer = Buffer::new(0);
-        buffer.edit(&[0..0], "abcdefghi")
+        buffer.edit(&[0..0], "abcdefghi");
         buffer.edit(&[0..0], "DEF");
 
         let snapshot = buffer.snapshot();
