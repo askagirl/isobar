@@ -2,6 +2,7 @@ const React = require("react");
 const ReactDOM = require("react-dom");
 const { styled } = require("styletron-react");
 const $ = React.createElement;
+const { ActionContext, Action } = require("./action_dispatcher");
 
 const Root = styled("div", {
   boxShadow: "0 6px 12px -2px rgba(0, 0, 0, 0.4)",
@@ -29,7 +30,7 @@ const SearchResultList = styled("ol", {
   listStyleType: "none",
   height: "200px",
   overflow: "auto",
-  padding: 0,
+  padding: 0
 });
 
 const SearchResultListItem = styled("li", {
@@ -41,10 +42,10 @@ const SearchResultListItem = styled("li", {
   borderBottom: "1px solid #dbdbdc"
 });
 
-const SearchResultMatchQuery = styled("b", {
+const SearchResultMatchedQuery = styled("b", {
   color: "#304ee2",
   fontWeight: "bold"
-})
+});
 
 class SelectedSearchResultListItem extends React.Component {
   render() {
@@ -76,26 +77,32 @@ module.exports = class FileFinder extends React.Component {
     super();
     this.didChangeQuery = this.didChangeQuery.bind(this);
     this.didChangeIncludeIgnored = this.didChangeIncludeIgnored.bind(this);
-    this.didKeyDown = this.didKeyDown.bind(this);
   }
 
   render() {
     return $(
-      Root,
-      null,
-      $(QueryInput, {
-        $ref: inputNode => (this.queryInput = inputNode),
-        value: this.props.query,
-        onChange: this.didChangeQuery,
-        onKeyDown: this.didKeyDown
-      }),
+      ActionContext,
+      { add: "FileFinder" },
       $(
-        SearchResultList,
-        {},
-        ...this.props.results.map((result, i) =>
-          this.renderSearchResult(result, i === this.props.selected_index)
+        Root,
+        null,
+        $(QueryInput, {
+          $ref: inputNode => (this.queryInput = inputNode),
+          value: this.props.query,
+          onChange: this.didChangeQuery
+        }),
+        $(
+          SearchResultList,
+          {},
+          ...this.props.results.map((result, i) =>
+            this.renderSearchResult(result, i === this.props.selected_index)
+          )
         )
-      )
+      ),
+      $(Action, { type: "SelectPrevious" }),
+      $(Action, { type: "SelectNext" }),
+      $(Action, { type: "Confirm" }),
+      $(Action, { type: "Close" })
     );
   }
 
@@ -106,7 +113,7 @@ module.exports = class FileFinder extends React.Component {
     while (true) {
       if (pathIndex === positions[queryIndex]) {
         children.push(
-          $(SearchResultMatchQuery, null, display_path[pathIndex])
+          $(SearchResultMatchedQuery, null, display_path[pathIndex])
         );
         pathIndex++;
         queryIndex++;
@@ -142,22 +149,5 @@ module.exports = class FileFinder extends React.Component {
       type: "UpdateIncludeIgnored",
       include_ignored: event.target.checked
     });
-  }
-
-  didKeyDown(event) {
-    switch (event.key) {
-      case "ArrowUp":
-        this.props.dispatch({ type: "SelectPrevious" });
-        break;
-      case "ArrowDown":
-        this.props.dispatch({ type: "SelectNext" });
-        break;
-      case "Enter":
-        this.props.dispatch({ type: "Confirm" });
-        break;
-      case "Escape":
-        this.props.dispatch({ type: "Close" });
-        break;
-    }
   }
 };
