@@ -181,7 +181,7 @@ Once we get the basic collaboration experience down, we'll be looking to expand 
 
 * [x] Key bindings system
 * [x] Horizontal scrolling
-* [ ] Word- and line-based cursor movement
+* [x] Word- and line-based cursor movement
 * [x] Gutter with line numbers
 * [ ] Mouse iteraction
 * [ ] Workspace tabs

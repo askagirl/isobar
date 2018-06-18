@@ -142,11 +142,59 @@ class TextEditor extends React.Component {
         type: "SelectRight",
         onWillDispatch: this.pauseCursorBlinking
       }),
+      $(Action, {
+        type: "SelectToBeginningOfWord",
+        onWillDispatch: this.pauseCursorBlinking
+      }),
+      $(Action, {
+        type: "SelectToEndOfWord",
+        onWillDispatch: this.pauseCursorBlinking
+      }),
+      $(Action, {
+        type: "SelectToBeginningOfLine",
+        onWillDispatch: this.pauseCursorBlinking
+      }),
+      $(Action, {
+        type: "SelectToEndOfLine",
+        onWillDispatch: this.pauseCursorBlinking
+      }),
+      $(Action, {
+        type: "SelectToTop",
+        onWillDispatch: this.pauseCursorBlinking
+      }),
+      $(Action, {
+        type: "SelectToBottom",
+        onWillDispatch: this.pauseCursorBlinking
+      }),
       $(Action, { type: "MoveUp", onWillDispatch: this.pauseCursorBlinking }),
       $(Action, { type: "MoveDown", onWillDispatch: this.pauseCursorBlinking }),
       $(Action, { type: "MoveLeft", onWillDispatch: this.pauseCursorBlinking }),
       $(Action, {
         type: "MoveRight",
+        onWillDispatch: this.pauseCursorBlinking
+      }),
+      $(Action, {
+        type: "MoveToBeginningOfWord",
+        onWillDispatch: this.pauseCursorBlinking
+      }),
+      $(Action, {
+        type: "MoveToEndOfWord",
+        onWillDispatch: this.pauseCursorBlinking
+      }),
+      $(Action, {
+        type: "MoveToBeginningOfLine",
+        onWillDispatch: this.pauseCursorBlinking
+      }),
+      $(Action, {
+        type: "MoveToEndOfLine",
+        onWillDispatch: this.pauseCursorBlinking
+      }),
+      $(Action, {
+        type: "MoveToTop",
+        onWillDispatch: this.pauseCursorBlinking
+      }),
+      $(Action, {
+        type: "MoveToBottom",
         onWillDispatch: this.pauseCursorBlinking
       }),
       $(Action, {
@@ -227,7 +275,7 @@ class TextEditor extends React.Component {
             horizontal_autoscroll.end_line.length,
             horizontal_autoscroll.end.column + horizontal_margin
           )
-        ) + gutterWidth
+        ) + gutterWidth;
 
       // This function will be called during render, so we avoid calling
       // setState and we manually manipulate this.state instead.
