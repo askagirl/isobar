@@ -183,7 +183,7 @@ Once we get the basic collaboration experience down, we'll be looking to expand 
 * [x] Horizontal scrolling
 * [x] Word- and line-based cursor movement
 * [x] Gutter with line numbers
-* [ ] Mouse iteraction
+* [x] Basic mouse iteraction
 * [ ] Workspace tabs
 * [ ] Split panes
 * [ ] Undo history
