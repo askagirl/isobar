@@ -892,8 +892,8 @@ mod tests {
         cursor.prev();
         assert_eq!(cursor.item(), Some(&4));
         assert_eq!(cursor.prev_item(), Some(&3));
-        assert_eq!(cursor.start::<Count>(), Count(2));
-        assert_eq!(cursor.start::<Sum>(), Sum(3));
+        assert_eq!(cursor.start::<Count>(), Count(3));
+        assert_eq!(cursor.start::<Sum>(), Sum(6));
 
         cursor.prev();
         assert_eq!(cursor.item(), Some(&3));
