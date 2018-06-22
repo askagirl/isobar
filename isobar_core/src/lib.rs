@@ -40,7 +40,6 @@ mod file_finder;
 mod fuzzy;
 mod movement;
 mod never;
-mod repository;
 mod project;
 #[cfg(test)]
 mod stream_ext;

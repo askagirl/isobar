@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    "ocean",
     "isobar_core",
     "isobar_server",
     "isobar_cli",
