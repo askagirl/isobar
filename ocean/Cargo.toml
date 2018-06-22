@@ -5,3 +5,4 @@ authors = ["Josh Cooper <ugtstreamer@ex.ua>", "Vlad Hashimoto <hashimoto.stream@
 
 [dependencies]
 smallvec = "0.6"
+parking_lot = "0.5"
