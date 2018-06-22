@@ -6,3 +6,6 @@ authors = ["Josh Cooper <ugtstreamer@ex.ua>", "Vlad Hashimoto <hashimoto.stream@
 [dependencies]
 smallvec = "0.6.1"
 parking_lot = "0.5"
+
+[dev-dependencies]
+rand = "0.3"
