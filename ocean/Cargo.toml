@@ -4,5 +4,5 @@ version = "0.1.0"
 authors = ["Josh Cooper <ugtstreamer@ex.ua>", "Vlad Hashimoto <hashimoto.stream@gmail.com>"]
 
 [dependencies]
-smallvec = "0.6"
+smallvec = "0.6.1"
 parking_lot = "0.5"
