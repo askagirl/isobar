@@ -29,7 +29,7 @@ impl Unique {
         }
     }
 
-    pub fn inc(&mut self) -> {
+    pub fn inc(&mut self) {
         self.seq += 1;
     }
 }
