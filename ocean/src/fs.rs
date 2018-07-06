@@ -378,7 +378,7 @@ impl btree::Dimension for Walk {
     type Summary = EntrySummary;
 
     fn from_summary(summary: &Self::Summary) -> &Self {
-        &summary.walk.clone()
+        &summary.walk
     }
 }
 
