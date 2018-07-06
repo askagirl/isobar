@@ -303,7 +303,7 @@ impl Cursor {
         let prev_position = self.tree_cursor.start::<id::Ordered>();
         match self.tree_cursor.item(db)?.unwrap() {
             TreeEntry::File { .. } => self.tree_cursor.next(db)?,
-            TreeEntry::Dir { name, ..} => {
+            TreeEntry::Dir { name, .. } => {
                 let mut dir_end = self.tree_cursor.start::<Walk>();
                 dir_end.push(Step::VisitDir(name.clone()));
                 dir_end.push(Step::VisitParent);
@@ -339,7 +339,7 @@ impl Builder {
         }
 
         let mut old_entries = old_tree.entries.cursor();
-        let mut new_entries = old_entries
+        let new_entries = old_entries
             .slice(&walk, SeekBias::Right, entry_store)
             .map_err(|error| Error::StoreReadError(error))?;
 
@@ -364,8 +364,9 @@ impl Builder {
     ) -> Result<(), S::ReadError> {
         let entry_store = store.entry_store();
         let id = store.gen_id();
-
-        // TODO: Eliminate ordered id generated and go back to generating 1 id per call?
+        let name = Arc::new(name.into());
+        let inode = Some(inode);
+        // TODO: Eliminate ordered id generator and go back to generating 1 id per call?
         let position = id::Ordered::between(
             &self.new_entries.extent(entry_store)?,
             &self.old_entries.start(),
@@ -375,13 +376,31 @@ impl Builder {
         self.new_entries.push(
             TreeEntry::Dir {
                 id,
-                name: Arc::new(name.into()),
-                inode: Some(inode),
+                name: name.clone(),
+                inode,
                 position,
             },
             entry_store,
         )?;
+        self.walk.0.push(Step::VisitDir(name));
         self.open_dir_count += 1;
+
+        Ok(())
+    }
+
+    pub fn pop_dir<S: Store>(&mut self, store: &S) -> Result<(), S::ReadError> {
+        let entry_store = store.entry_store();
+
+        // TODO: Eliminate ordered id generator and go back to generating 1 id per call?
+        let position = id::Ordered::between(
+            &self.new_entries.extent(entry_store)?,
+            &self.old_entries.start(),
+        ).next()
+            .unwrap();
+
+        self.new_entries.push(TreeEntry::ParentDir { position }, entry_store)?;
+        self.walk.0.pop();
+        self.open_dir_count -= 1;
 
         Ok(())
     }
@@ -713,8 +732,8 @@ mod tests {
     #[test]
     fn test_builder() {
         let db = NullStore::new();
-        let mut tree = Tree::new("root", &db).unwrap();
-        let mut builder = Builder::new(tree, &PathBuffer::from("root"), &db).unwrap();
+        let tree = Tree::new("root", &db).unwrap();
+        let mut builder = Builder::new(tree, &PathBuf::from("root"), &db).unwrap();
 
         builder.push_dir("a", 0, &db).unwrap();
         builder.push_dir("b", 1, &db).unwrap();
@@ -729,6 +748,27 @@ mod tests {
         assert_eq!(cursor.path(), PathBuf::from("root/a/b"));
         assert_eq!(cursor.next(&db).unwrap(), true);
         assert_eq!(cursor.path(), PathBuf::from("root/a/b/c"));
+
+        builder.pop_dir(&db).unwrap();
+        builder.push_dir("d", 3, &db).unwrap();
+        builder.push_dir("e", 3, &db).unwrap();
+        builder.pop_dir(&db).unwrap();
+        builder.push_dir("f", 3, &db).unwrap();
+        let tree = builder.tree(&db).unwrap();
+        let mut cursor = tree.cursor(&db).unwrap();
+        assert_eq!(cursor.path(), PathBuf::from("root"));
+        assert_eq!(cursor.next(&db).unwrap(), true);
+        assert_eq!(cursor.path(), PathBuf::from("root/a"));
+        assert_eq!(cursor.next(&db).unwrap(), true);
+        assert_eq!(cursor.path(), PathBuf::from("root/a/b"));
+        assert_eq!(cursor.next(&db).unwrap(), true);
+        assert_eq!(cursor.path(), PathBuf::from("root/a/b/c"));
+        assert_eq!(cursor.next(&db).unwrap(), true);
+        assert_eq!(cursor.path(), PathBuf::from("root/a/b/d"));
+        assert_eq!(cursor.next(&db).unwrap(), true);
+        assert_eq!(cursor.path(), PathBuf::from("root/a/b/d/e"));
+        assert_eq!(cursor.next(&db).unwrap(), true);
+        assert_eq!(cursor.path(), PathBuf::from("root/a/b/d/f"));
     }
 
     #[derive(Debug)]
