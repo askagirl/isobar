@@ -94,9 +94,6 @@ enum ItemChange {
     },
     RemoveDirEntry {
         entry: Item,
-        // Use inode to determine if the removed entry was actually moved elsewhere. We can maintain
-        // a temporary mapping of inodes to inserted entry ids on the builder so we know what moved
-        // in the second pass.
         inode: Inode,
     },
 }
@@ -132,6 +129,59 @@ impl Tree {
 
     pub fn cursor<S: Store>(&self, db: &S) -> Result<Cursor, S::ReadError> {
         Cursor::new(self, db)
+    }
+
+    pub fn id_for_path<I: Into<PathBuf>, S: Store>(
+        &self,
+        path: I,
+        db: &S,
+    ) -> Result<Option<id::Unique>, S::ReadError> {
+        let path = path.into();
+        let item_db = db.item_store();
+        let mut parent_file_id = id::Unique::default();
+        let mut cursor = self.items.cursor();
+
+        for component in path.components() {
+            cursor.seek(
+                &Key {
+                    file_id: parent_file_id,
+                    kind: KeyKind::Metadata,
+                },
+                SeekBias::Right,
+                item_db,
+            )?;
+
+            let component_name = Arc::new(OsString::from(component.as_os_str()));
+
+            cursor.seek_forward(
+                &Key {
+                    file_id: parent_file_id,
+                    kind: KeyKind::DirEntry {
+                        is_dir: true,
+                        name: component_name.clone(),
+                    },
+                },
+                SeekBias::Left,
+                item_db,
+            )?;
+
+            match cursor.item(item_db)? {
+                Some(Item::DirEntry {
+                    name: entry_name,
+                    child_id,
+                    ..
+                }) => {
+                    if component_name == entry_name {
+                        parent_file_id = child_id;
+                    } else {
+                        return Ok(None);
+                    }
+                }
+                _ => return Ok(None),
+            }
+        }
+
+        Ok(Some(parent_file_id))
     }
 
     #[cfg(test)]
