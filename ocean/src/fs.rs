@@ -759,9 +759,14 @@ mod tests {
 
             let mut store = NullStore::new();
             let store = &store;
+            let mut next_inode = 0;
 
-            let mut reference_tree = TestDir::gen(&mut rng, 0);
+            let mut reference_tree = TestDir::gen(&mut rng, &mut next_inode, 0);
             let mut tree = Tree::new();
+            let mut builder = Builder::new(tree.clone(), store).unwrap();
+            reference_tree.build(&mut builder, 1, store);
+            tree = builder.tree(store).unwrap();
+            assert_eq!(tree.paths(store), reference_tree.paths());
 
             for _ in 0..5 {
                 // eprintln!("=========================================");
@@ -769,11 +774,29 @@ mod tests {
                 // eprintln!("new tree paths {:#?}", reference_tree.paths().len());
                 // eprintln!("=========================================");
 
+                let mut moves = Vec::new();
+                reference_tree.mutate(
+                    &mut rng,
+                    &mut PathBuf::new(),
+                    &mut next_inode,
+                    &mut moves,
+                    0,
+                );
+
                 let mut builder = Builder::new(tree.clone(), store).unwrap();
                 reference_tree.build(&mut builder, 1, store);
-                tree = builder.tree(store).unwrap();
-                assert_eq!(tree.paths(store), reference_tree.paths());
-                reference_tree.mutate(&mut rng, 0);
+                let new_tree = builder.tree(store).unwrap();
+                assert_eq!(new_tree.paths(store), reference_tree.paths());
+                for m in moves {
+                    if let Some(new_path) = m.new_path {
+                        assert_eq!(
+                            new_tree.id_for_path(&new_path, store),
+                            tree.id_for_path(&m.old_path, store)
+                        );
+                    }
+                }
+
+                tree = new_tree;
             }
         }
     }
@@ -788,36 +811,104 @@ mod tests {
 
     const MAX_TEST_TREE_DEPTH: usize = 5;
 
+    #[derive(Clone)]
     struct TestDir {
         name: OsString,
+        inode: Inode,
         dir_entries: Vec<TestDir>,
     }
 
+    struct Move {
+        dir: TestDir,
+        old_path: PathBuf,
+        new_path: Option<PathBuf>,
+    }
+
     impl TestDir {
-        fn gen<T: Rng>(rng: &mut T, depth: usize) -> Self {
+        fn gen<T: Rng>(rng: &mut T, next_inode: &mut u64, depth: usize) -> Self {
+            let new_inode = *next_inode;
+            *next_inode += 1;
+
             let mut tree = Self {
                 name: gen_name(rng),
+                inode: Inode(new_inode),
                 dir_entries: (0..rng.gen_range(0, MAX_TEST_TREE_DEPTH - depth + 1))
-                    .map(|_| Self::gen(rng, depth + 1))
+                    .map(|_| Self::gen(rng, next_inode, depth + 1))
                     .collect(),
             };
             tree.normalize_entries();
             tree
         }
 
-        fn mutate<T: Rng>(&mut self, rng: &mut T, depth: usize) {
-            self.dir_entries.retain(|_| !rng.gen_weighted_bool(5));
-            for dir in &mut self.dir_entries {
-                if rng.gen_weighted_bool(3) {
-                    dir.mutate(rng, depth + 1);
+        fn move_entry<T: Rng>(
+            rng: &mut T,
+            path: &mut PathBuf,
+            moves: &mut Vec<Move>,
+        ) -> Option<TestDir> {
+            let name = gen_name(rng);
+            path.push(&name);
+            let mut removes = moves
+                .iter_mut()
+                .filter(|m| m.new_path.is_none())
+                .collect::<Vec<_>>();
+            if let Some(remove) = rng.choose_mut(&mut removes) {
+                remove.new_path = Some(path.clone());
+                let mut dir = remove.dir.clone();
+                dir.name = name;
+                return Some(dir);
+            }
+            path.pop();
+            None
+        }
+
+        fn mutate<T: Rng>(
+            &mut self,
+            rng: &mut T,
+            path: &mut PathBuf,
+            next_inode: &mut u64,
+            moves: &mut Vec<Move>,
+            depth: usize,
+        ) {
+            path.push(&self.name);
+            self.dir_entries.retain(|entry| {
+                if rng.gen_weighted_bool(5) {
+                    let mut entry_path = path.clone();
+                    entry_path.push(&entry.name);
+                    moves.push(Move {
+                        dir: entry.clone(),
+                        old_path: entry_path,
+                        new_path: None,
+                    });
+                    false
+                } else {
+                    true
                 }
+            });
+            for _ in 0..rng.gen_range(0, self.dir_entries.len() + 1) {
+                rng.choose_mut(&mut self.dir_entries).unwrap().mutate(
+                    rng,
+                    path,
+                    next_inode,
+                    moves,
+                    depth + 1,
+                );
             }
             if depth < MAX_TEST_TREE_DEPTH {
                 for _ in 0..rng.gen_range(0, 5) {
-                    self.dir_entries.push(Self::gen(rng, depth + 1));
+                    let moved_entry = if rng.gen_weighted_bool(4) {
+                        Self::move_entry(rng, path, moves)
+                    } else {
+                        None
+                    };
+                    if let Some(moved_entry) = moved_entry {
+                        self.dir_entries.push(moved_entry);
+                    } else {
+                        self.dir_entries.push(Self::gen(rng, next_inode, depth + 1));
+                    }
                 }
             }
             self.normalize_entries();
+            path.pop();
         }
 
         fn normalize_entries(&mut self) {
@@ -851,7 +942,8 @@ mod tests {
 
         fn build<S: Store>(&self, builder: &mut Builder, depth: usize, store: &S) {
             let name = self.name.clone();
-            builder.push(name, Metadata::dir(0), depth, store).unwrap();
+            let metadata = Metadata::dir(self.inode.0);
+            builder.push(name, metadata, depth, store).unwrap();
             for dir in &self.dir_entries {
                 dir.build(builder, depth + 1, store);
             }
