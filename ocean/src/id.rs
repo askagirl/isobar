@@ -18,7 +18,7 @@ impl Unique {
     pub fn random() -> Self {
         Self {
             replica_id: Uuid::new(UuidVersion::Random).unwrap(),
-            seq: 0,
+            pub seq: 0,
         }
     }
 
