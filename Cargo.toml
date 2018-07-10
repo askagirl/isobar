@@ -6,3 +6,6 @@ members = [
     "isobar_cli",
     "isobar_wasm",
 ]
+
+[profile.release]
+debug = true
