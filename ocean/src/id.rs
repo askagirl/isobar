@@ -7,8 +7,8 @@ type OrderedEntry = u16;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd)]
 pub struct Unique {
-    replica_id: Uuid,
-    seq: u64,
+    replica_id: u64,
+    pub seq: u64,
 }
 
 #[derive(Ord, PartialOrd, Eq, PartialEq, Clone, Debug)]
@@ -17,8 +17,8 @@ pub struct Ordered(Arc<Vec<OrderedEntry>>);
 impl Unique {
     pub fn random() -> Self {
         Self {
-            replica_id: Uuid::new(UuidVersion::Random).unwrap(),
-            pub seq: 0,
+            replica_id: 1,
+            seq: 0,
         }
     }
 
@@ -30,7 +30,7 @@ impl Unique {
 impl Default for Unique {
     fn default() -> Self {
         Self {
-            replica_id: Uuid::nil(),
+            replica_id: 0,
             seq: 0,
         }
     }
