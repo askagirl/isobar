@@ -1,7 +1,0 @@
-#!/bin/bash
-
-set -e
-
-cd isobar_core; cargo test; cd -
-cd isobar_wasm; script/test; cd -
-cd isobar_ui; yarn test; cd -

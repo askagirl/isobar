@@ -1,11 +1,13 @@
-[workspace]
-members = [
-    "ocean",
-    "isobar_core",
-    "isobar_server",
-    "isobar_cli",
-    "isobar_wasm",
-]
+[package]
+name = "ocean"
+version = "0.1.0"
+authors = ["Josh Cooper <ugtstreamer@ex.ua>", "Vlad Hashimoto <hashimoto.stream@gmail.com>"]
 
-[profile.release]
-debug = true
+[dependencies]
+lazy_static = "1.0"
+smallvec = "0.6.1"
+parking_lot = "0.5"
+uuid = { version = "0.6", features = ["v4"] }
+
+[dev-dependencies]
+rand = "0.3"
