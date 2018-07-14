@@ -17,7 +17,7 @@ pub struct Ordered(Arc<Vec<OrderedEntry>>);
 impl Unique {
     pub const DEFAULT: Unique = Unique {
         replica_id: 0,
-        seq: 0
+        seq: 0,
     };
 
     pub fn new(replica_id: u64) -> Self {
