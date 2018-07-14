@@ -87,7 +87,7 @@ When using Ocean via the Isobar editor, command-line interaction should not be r
 
 * `ocean reset <version>` Switch the current branch to the specified state in the repository and replicate this change out to other replicas.
 
-* `ocean merge <branch>` Merge the specified branch into the current branch. This only succeeds if the current branch shares a common ancestor with the current branch.
+* `ocean merge <branch>` Merge the specified branch into the current branch. This only succeeds if the specified branch shares a common ancestor with the current branch.
 
 ## Isobar integration
 
