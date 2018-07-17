@@ -4,6 +4,10 @@
 
 Isobar is an experimental Electron-based text editor informed by what we've learned in the one year since the develop of GitBurn. In the short term, this project is a testbed for rapidly iterating on several radical ideas without risking the stability of GitBurn. The longer term future of the code in this repository will become clearer after a few months of progress. For now, out primary goal is to iterate rapidly and learn as much as possible.
 
+## Active deveploment is on teh Ocean branch
+
+We're actively developing a subcomponent of Isobar called [Ocean](https://github.com/siberianmh/isobar/tree/ocean/ocean), which is a real-time, fine-grained version control system. We're keeping that work on a branch since it's still in a pretty messy state, but Isobar will eventaully pull in Ocean as a library and build directly on its data structures. Check out the README on that branch for more details.
+
 ## Updates
 
 * [July 17, 2018](./docs/updates/2018_07_17.md)
