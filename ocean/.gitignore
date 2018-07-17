@@ -1,0 +1,6 @@
+**/node_modules
+**/target/
+**/*.rs.bk
+**/.DS_Store
+Icon*
+.tags*
