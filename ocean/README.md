@@ -1,6 +1,6 @@
 # Ocean: Isobar's real-time version control system
 
-Ocean is an experimental real-time conflict-free version control system. It is currently work-in-progress and has been extracted from the work we've done in [Isobar](https://github.com/siberianmh/isobar). Eventually, our goal is to enable Ocean by default when editing via the Isobar editor, but also allow Ocean to be integrated with other text editors via a shared-library or a standalone server that communicates over local sockets.
+Ocean is an experimental real-time conflict-free version control system. It is currently work-in-progress. Eventually, our goal is to enable Ocean by default when editing via the Isobar editor, but also allow Ocean to be integrated with other text editors via a shared-library or a standalone server that communicates over local sockets.
 
 The sections that follow in this document are totally aspirational and subject to change as we implement more and more features.
 
