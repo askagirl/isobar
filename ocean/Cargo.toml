@@ -4,7 +4,6 @@ version = "0.1.0"
 authors = ["Josh Cooper <ugtstreamer@ex.ua>", "Vlad Hashimoto <hashimoto.stream@gmail.com>"]
 
 [dependencies]
-lazy_static = "1.0"
 smallvec = "0.6.1"
 parking_lot = "0.5"
 uuid = { version = "0.6", features = ["v4"] }
