@@ -1,10 +1,10 @@
-pipeline:
-  clone:
+clone:
     image: plugins/git
     depth: 50
     recursive: true
     path: 18.195.10.114:3000/siberianmh/isobar
 
+pipeline:
   build:
     image: library/rust
     commands:
