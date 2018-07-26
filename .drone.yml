@@ -14,8 +14,8 @@ pipeline:
       - nvm install v8.9.3
       - script/cibuild
 
-cache:
-  mount:
-    - $HOME/.cargo
-    - node_modules
-    - $HOME/.cache/yarn
+# cache:
+#   mount:
+#     - $HOME/.cargo
+#     - node_modules
+#     - $HOME/.cache/yarn
