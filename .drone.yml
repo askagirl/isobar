@@ -1,10 +1,10 @@
-clone:
-  image: plugins/git
-  depth: 50
-  recursive: true
-  path: 18.195.10.114:3000/siberianmh/isobar
-
 pipeline:
+  clone:
+    image: plugins/git
+    depth: 50
+    recursive: true
+    path: 18.195.10.114:3000/siberianmh/isobar
+
   build:
     image: library/rust
     commands:
@@ -14,8 +14,8 @@ pipeline:
       - nvm install v8.9.3
       - script/cibuild
 
-# cache:
-#   mount:
-#     - $HOME/.cargo
-#     - node_modules
-#     - $HOME/.cache/yarn
+cache:
+  mount:
+    - $HOME/.cargo
+    - node_modules
+    - $HOME/.cache/yarn
