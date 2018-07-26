@@ -1,6 +1,6 @@
 pipeline:
-  app:
-    image: rust
+  build:
+    # image: rust
     commands:
       - curl -o- -L https://yarnpkg.com/install.sh | bash
       - export PATH="$HOME/.yarn/bin:$PATH"
@@ -8,8 +8,8 @@ pipeline:
       - nvm install v8.9.3
       - script/cibuild
 
-cache:
-  mount:
-    - $HOME/.cargo
-    - node_modules
-    - $HOME/.cache/yarn
+# cache:
+#   mount:
+#     - $HOME/.cargo
+#     - node_modules
+#     - $HOME/.cache/yarn
