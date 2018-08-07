@@ -10,11 +10,11 @@ We're actively developing a subcomponent of Isobar called [Ocean](https://github
 
 ## Updates
 
+* [August 7, 2018](./docs/updates/2018_08_07.md)
 * [July 30, 2018](./docs/updates/2018_07_30.md)
 * [July 23, 2018](./docs/updates/2018_07_23.md)
 * [July 17, 2018](./docs/updates/2018_07_17.md)
 * [June 25, 2018](./docs/updates/2018_06_25.md)
-* [June 11, 2018](./docs/updates/2018_06_11.md)
 * [Archives](./docs/updates/)
 
 ## Foundational priorities
