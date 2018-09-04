@@ -10,12 +10,12 @@ We're currently focused on a sub-project of Isobar called [Nano](./nano), which 
 
 ## Updates
 
+* [September 04, 2018](./docs/updates/2018_09_04.md)
 * [August 28, 2018](./docs/updates/2018_08_28.md)
 * [August 7, 2018](./docs/updates/2018_08_07.md)
 * [July 30, 2018](./docs/updates/2018_07_30.md)
 * [July 23, 2018](./docs/updates/2018_07_23.md)
 * [July 17, 2018](./docs/updates/2018_07_17.md)
-* [June 25, 2018](./docs/updates/2018_06_25.md)
 * [Archives](./docs/updates/)
 
 ## Foundational priorities
