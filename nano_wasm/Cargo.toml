@@ -1,0 +1,13 @@
+[package]
+name = "nano_wasm"
+version = "0.1.0"
+authors = ["Josh Cooper <ugtstreamer@ex.ua>", "Vlad Hashimoto <hashimoto.stream@gmail.com>"]
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+bincode = "1.0"
+js-sys = "0.2"
+nano_core = { path = "../nano_core" }
+wasm_bindgen = "0.2.21"
