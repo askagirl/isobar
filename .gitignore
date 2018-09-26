@@ -2,6 +2,7 @@
 **/target/
 **/*.rs.bk
 **/.DS_Store
+**/.cargo
 Icon*
 .tags*
 isobar_wasm/dist
