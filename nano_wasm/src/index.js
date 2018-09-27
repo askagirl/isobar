@@ -2,7 +2,7 @@ let server;
 
 const nanoImportPromise = import("../dist/nano_wasm");
 
-export async function initialize() {
+export async function init() {
   const nano = await nanoImportPromise;
   if (!server) {
     server = nano.Server.new();

@@ -5,7 +5,7 @@ suite("WorkTree", () => {
   let WorkTree;
 
   suiteSetup(async () => {
-    ({ WorkTree } = await nano.initialize());
+    ({ WorkTree } = await nano.init());
   });
 
   test("basic API interaction", () => {
