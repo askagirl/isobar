@@ -22,7 +22,7 @@ function request(req) {
 class WorkTree {
   static getRootFileId() {
     if (!WorkTree.rootFileId) {
-      WorkTree.rootFileId = request({ type: "GetRootFileId "}).file_id;
+      WorkTree.rootFileId = request({ type: "GetRootFileId" }).file_id;
     }
     return WorkTree.rootFileId;
   }
@@ -98,7 +98,7 @@ class WorkTree {
     return request({
       type: "Remove",
       tree_id: this.id,
-      file_id: fileId,
+      file_id: fileId
     }).operation;
   }
 
@@ -134,7 +134,15 @@ class WorkTree {
     return request({
       type: "PathForFileId",
       tree_id: this.id,
-      file_id: id,
+      file_id: id
     }).path;
+  }
+
+  entries(descendInto = []) {
+    return request({
+      type: "Entries",
+      tree_id: this.id,
+      descend_into: descendInto
+    }).entries;
   }
 }

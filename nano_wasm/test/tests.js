@@ -4,7 +4,7 @@ const assert = require("assert");
 suite("WorkTree", () => {
   let WorkTree;
 
-  squiteSetup(async () => {
+  suiteSetup(async () => {
     ({ WorkTree } = await nano.initialize());
   });
 
@@ -43,7 +43,7 @@ suite("WorkTree", () => {
     assert.deepEqual(tree2.changesSince(buffer1, tree2VersionBeforeEdit), [
       { start: 0, end: 0, text: "123" },
       { start: 4, end: 5, text: "123" },
-      { start: 8, end: 8, text: "123" },
+      { start: 8, end: 8, text: "123" }
     ]);
 
     const dir1 = tree1.createDirectory(rootFileId, "x");
@@ -51,12 +51,55 @@ suite("WorkTree", () => {
     assert.equal(tree1.pathForFileId(dir2.fileId), "x/y");
     assert.equal(tree1.fileIdForPath("x/y"), dir2.fileId);
 
-    tree1.rename(dir1.fileId, tree1.fileIdForPath("a/b"), "y");
-    assert.equal(tree1.fileIdForPath("a/b/y"), dir1.fileId);
+    tree1.rename(dir1.fileId, tree1.fileIdForPath("a/b"), "x");
+    assert.equal(tree1.fileIdForPath("a/b/x"), dir1.fileId);
 
     const c = tree1.fileIdForPath("a/b/c");
     tree1.remove(c);
     assert.equal(tree1.fileIdForPath("a/b/c"), null);
     assert.equal(tree1.pathForFileId(c), null);
+
+    assert.deepEqual(tree1.entries(), [
+      {
+        depth: 1,
+        fileId: tree1.fileIdForPath("a"),
+        fileType: "Directory",
+        name: "a",
+        status: "Unchanged"
+      }
+    ]);
+    assert.deepEqual(
+      tree1.entries([tree1.fileIdForPath("a"), tree1.fileIdForPath("a/b")]),
+      [
+        {
+          depth: 1,
+          fileId: tree1.fileIdForPath("a"),
+          fileType: "Directory",
+          name: "a",
+          status: "Unchanged"
+        },
+        {
+          depth: 2,
+          fileId: tree1.fileIdForPath("a/b"),
+          fileType: "Directory",
+          name: "b",
+          status: "Unchanged"
+        },
+        {
+          depth: 3,
+          fileId: c,
+          fileType: "Text",
+          name: "c",
+          status: "Removed"
+        },
+        {
+          depth: 3,
+          fileId: dir1.fileId,
+          fileType: "Directory",
+          name: "x",
+          status: "New"
+        }
+      ]
+    );
   });
 });
