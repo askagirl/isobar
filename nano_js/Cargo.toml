@@ -1,5 +1,5 @@
 [package]
-name = "nano_wasm"
+name = "nano_js"
 version = "0.1.0"
 authors = ["Josh Cooper <ugtstreamer@ex.ua>", "Vlad Hashimoto <hashimoto.stream@gmail.com>"]
 
