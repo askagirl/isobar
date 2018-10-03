@@ -561,7 +561,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "nano_wasm"
+name = "nano_js"
 version = "0.1.0"
 dependencies = [
  "base64 0.9.3 (registry+https://github.com/rust-lang/crates.io-index)",
