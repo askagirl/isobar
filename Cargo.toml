@@ -1,6 +1,7 @@
 [workspace]
 members = [
-    "nano",
+    "nano_core",
+    "nano_js",
     "isobar_core",
     "isobar_server",
     "isobar_cli",

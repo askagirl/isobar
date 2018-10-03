@@ -2,7 +2,9 @@
 **/target/
 **/*.rs.bk
 **/.DS_Store
+**/.cargo
 Icon*
 .tags*
 isobar_wasm/dist
 isobar_browser/dist
+nano_js/dist
