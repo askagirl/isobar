@@ -1,5 +1,5 @@
 {
-  "name": "nano_wasm",
+  "name": "nano_js",
   "version": "0.1.0",
   "main": "dist/index.js",
   "browser": "src/index.js",

@@ -1,7 +1,7 @@
 let server: any;
 
 export async function init() {
-  const nano = await import("../dist/nano_wasm");
+  const nano = await import("../dist/nano_js");
   if (!server) {
     server = nano.Server.new();
   }
