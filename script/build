@@ -7,3 +7,4 @@ cd isobar_ui; yarn install; cd -
 cd isobar_cli; cargo build "$@"; cd -
 cd isobar_server; cargo build "$@"; cd -
 cd isobar_browser; script/build; cd -
+cd nano_js; yarn install && script/build; cd -
