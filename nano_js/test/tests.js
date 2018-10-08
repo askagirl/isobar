@@ -1,4 +1,4 @@
-const nano = require("../dist");
+const nano = require("../dist/index.node.js");
 const assert = require("assert");
 
 suite("WorkTree", () => {
