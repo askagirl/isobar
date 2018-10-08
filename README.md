@@ -6,7 +6,7 @@ Isobar is an experimental Electron-based text editor informed by what we've lear
 
 ## Q3 2018 Focus
 
-We're currently focused on a sub-project of Isobar called [Nano](./nano), which will serve as the foundation of Isobar but also be available as a standalone tool. Nano is an operation-based version control system that tracks changes at the level of individual keystrokes and synchronizes branches in real time.
+We're currently focused on a sub-project of Isobar called [Nano](./nano_core), which will serve as the foundation of Isobar but also be available as a standalone tool. Nano is an operation-based version control system that tracks changes at the level of individual keystrokes and synchronizes branches in real time.
 
 ## Updates
 
