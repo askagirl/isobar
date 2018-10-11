@@ -1629,9 +1629,9 @@ minipass@^2.2.1, minipass@^2.3.3:
     yallist "^3.0.0"
 
 minizlib@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.npmjs.org/minizlib/-/minizlib-1.1.0.tgz#11e13658ce46bc3a70a267aac58359d1e0c29ceb"
-  integrity sha512-4T6Ur/GctZ27nHfpt9THOdRZNgyJ9FZchYO1ceg5S8Q3DNLCKYy44nCZzgCJgcvx2UM8czmqak5BCxJMrq37lA==
+  version "1.1.1"
+  resolved "https://registry.npmjs.org/minizlib/-/minizlib-1.1.1.tgz#6734acc045a46e61d596a43bb9d9cd326e19cc42"
+  integrity sha512-TrfjCjk4jLhcJyGMYymBH6oTXcWjYbUAXTHDbtnWHjZC25h0cdajHuPE1zxb4DVmu8crfh+HwH/WMuyLG0nHBg==
   dependencies:
     minipass "^2.2.1"
 
@@ -1807,9 +1807,9 @@ npm-bundled@^1.0.1:
   integrity sha512-m/e6jgWu8/v5niCUKQi9qQl8QdeEduFA96xHDDzFGqly0OOjI7c+60KM/2sppfnUU9JJagf+zs+yGhqSOFj71g==
 
 npm-packlist@^1.1.6:
-  version "1.1.11"
-  resolved "https://registry.npmjs.org/npm-packlist/-/npm-packlist-1.1.11.tgz#84e8c683cbe7867d34b1d357d893ce29e28a02de"
-  integrity sha512-CxKlZ24urLkJk+9kCm48RTQ7L4hsmgSVzEk0TLGPzzyuFxD7VNgy5Sl24tOLMzQv773a/NeJ1ce1DKeacqffEA==
+  version "1.1.12"
+  resolved "https://registry.npmjs.org/npm-packlist/-/npm-packlist-1.1.12.tgz#22bde2ebc12e72ca482abd67afc51eb49377243a"
+  integrity sha512-WJKFOVMeAlsU/pjXuqVdzU0WfgtIBCupkEVwn+1Y0ERAbUfWw8R4GjgVbaKnUjRoD2FoQbHOCbOyT5Mbs9Lw4g==
   dependencies:
     ignore-walk "^3.0.1"
     npm-bundled "^1.0.1"
@@ -2279,10 +2279,15 @@ schema-utils@^0.4.4, schema-utils@^0.4.5:
     ajv "^6.1.0"
     ajv-keywords "^3.1.0"
 
-semver@^5.0.1, semver@^5.3.0, semver@^5.5.0:
+semver@^5.0.1:
   version "5.5.1"
   resolved "https://registry.npmjs.org/semver/-/semver-5.5.1.tgz#7dfdd8814bdb7cabc7be0fb1d734cfb66c940477"
   integrity sha512-PqpAxfrEhlSUWge8dwIp4tZnQ25DIOthpiaHNIthsjEFQD6EvqUKUDM7L8O2rShkFccYo1VjJR0coWfNkCubRw==
+
+semver@^5.3.0, semver@^5.5.0:
+  version "5.6.0"
+  resolved "https://registry.npmjs.org/semver/-/semver-5.6.0.tgz#7e74256fbaa49c75aa7c7a205cc22799cac80004"
+  integrity sha512-RS9R6R35NYgQn++fkDWaOmqGoj4Ek9gGs+DPxNUZKuwE183xjJroKvyo1IzVFeXvUrvmALy6FWD5xrdJT25gMg==
 
 serialize-javascript@^1.4.0:
   version "1.5.0"
@@ -2375,9 +2380,9 @@ snapdragon@^0.8.1:
     use "^3.1.0"
 
 source-list-map@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.npmjs.org/source-list-map/-/source-list-map-2.0.0.tgz#aaa47403f7b245a92fbc97ea08f250d6087ed085"
-  integrity sha512-I2UmuJSRr/T8jisiROLU3A3ltr+swpniSmNPI4Ml3ZCX6tVnDsuZzK7F2hl5jTqbZBWCEKlj5HRQiPExXLgE8A==
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/source-list-map/-/source-list-map-2.0.1.tgz#3993bd873bfc48479cca9ea3a547835c7c154b34"
+  integrity sha512-qnQ7gVMxGNxsiL4lEuJwe/To8UnK7fAnmbGEEH8RpLouuKbeEm0lhbQVFIrNSuB+G7tVrAlVsZgETT5nljf+Iw==
 
 source-map-resolve@^0.5.0:
   version "0.5.2"
