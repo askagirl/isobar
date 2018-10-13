@@ -10,6 +10,7 @@ We're currently focused on a sub-project of Isobar called [Nano](./nano_core), w
 
 ## Updates
 
+* [October 9, 2018](./docs/updates/2018_10_09.md)
 * [September 21, 2018](./docs/updates/2018_09_21.md)
 * [September 04, 2018](./docs/updates/2018_09_04.md)
 * [August 28, 2018](./docs/updates/2018_08_28.md)
