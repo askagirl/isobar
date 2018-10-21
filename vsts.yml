@@ -1,0 +1,67 @@
+resources:
+- repo: self
+phases:
+- phase: Phase_1
+  displayName: Ubuntu 16.04
+
+  condition: succeeded()
+  queue:
+    name: Hosted Ubuntu 1604
+  steps:
+  - task: spontoreau.rust-vsts.rust-install.Rust@1
+    displayName: 'Rust Tool Installer'
+    inputs:
+      installNightly: true
+
+
+  - task: NodeTool@0
+    displayName: 'Use Node 10.x'
+    inputs:
+      versionSpec: 10.x
+
+    timeoutInMinutes: 2
+
+  - task: geeklearningio.gl-vsts-tasks-yarn.yarn-installer-task.YarnInstaller@2
+    displayName: 'Use Yarn 1.x'
+
+
+  - bash: |
+       source $HOME/.cargo/env
+       cargo --version
+       ./script/cibuild
+    displayName: 'Bash Script'
+  env:
+    cargo: /home/vsts/.cargo/bin/cargo
+
+
+- phase: Phase_2
+  displayName: macOS
+
+  condition: succeeded()
+  queue:
+    name: Hosted macOS
+  steps:
+  - task: spontoreau.rust-vsts.rust-install.Rust@1
+    displayName: 'Rust Tool Installer'
+    inputs:
+      installNightly: true
+
+
+  - task: NodeTool@0
+    displayName: 'Use Node 10.x'
+    inputs:
+      versionSpec: 10.x
+
+    timeoutInMinutes: 2
+
+  - task: geeklearningio.gl-vsts-tasks-yarn.yarn-installer-task.YarnInstaller@2
+    displayName: 'Use Yarn 1.x'
+
+
+  - bash: |
+       source $HOME/.cargo/env
+       cargo --version
+       ./script/cibuild
+    displayName: 'Bash Script'
+  env:
+    cargo: /home/vsts/.cargo/bin/cargo
