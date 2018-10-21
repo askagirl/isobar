@@ -1,8 +1,8 @@
-const nano = require("../dist/index.node.js");
-const assert = require("assert");
+import * as nano from "../src/index";
+import * as assert from 'assert';
 
 suite("WorkTree", () => {
-  let WorkTree;
+  let WorkTree: typeof nano.WorkTree;
 
   suiteSetup(async () => {
     ({ WorkTree } = await nano.init());
@@ -11,9 +11,9 @@ suite("WorkTree", () => {
   test("basic API interaction", () => {
     const rootFileId = WorkTree.getRootFileId();
     const baseEntries = [
-      { depth: 1, name: "a", type: "Directory" },
-      { depth: 2, name: "b", type: "Directory" },
-      { depth: 3, name: "c", type: "Text" }
+      { depth: 1, name: "a", type: nano.FileType.Directory },
+      { depth: 2, name: "b", type: nano.FileType.Directory },
+      { depth: 3, name: "c", type: nano.FileType.Text }
     ];
 
     const tree1 = new WorkTree(1);
@@ -122,6 +122,6 @@ suite("WorkTree", () => {
   });
 });
 
-function point(row, column) {
+function point(row: number, column: number): nano.Point {
   return { row, column };
 }

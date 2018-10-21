@@ -8,3 +8,4 @@ Icon*
 isobar_wasm/dist
 isobar_browser/dist
 nano_js/dist
+nano_js/test/dist
