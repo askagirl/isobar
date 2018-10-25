@@ -2,6 +2,7 @@
 name = "nano_core"
 version = "0.1.0"
 authors = ["Josh Cooper <ugtstreamer@ex.ua>", "Vlad Hashimoto <hashimoto.stream@gmail.com>"]
+edition = "2018"
 
 [dependencies]
 lazy_static = "1.0"
