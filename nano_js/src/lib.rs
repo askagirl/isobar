@@ -16,9 +16,6 @@ use futures::{Async, Future, Poll, Stream};
 use nano_core as nano;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::cell::Cell;
-use std::char;
-use std::collections::HashMap;
-use std::collections::HashSet;
 use std::io;
 use std::marker::PhantomData;
 use std::path::Path;
@@ -65,13 +62,19 @@ struct Base64<T>(T);
 pub struct WorkTreeNewArgs {
     replica_id: nano::ReplicaId,
     base: HexOid,
-    start_ops: Vec<nano::Operation>,
+    start_ops: Vec<Base64<nano::Operation>>,
 }
 
 #[wasm_bindgen]
 pub struct WorkTreeNewResult {
     tree: Option<WorkTree>,
     operations: Option<StreamToAsyncIterator>,
+}
+
+#[derive(Serialize)]
+pub struct WorkTreeNewTextFileResult {
+    file_id: Base64<nano::FileId>,
+    operation: Base64<nano::Operation>,
 }
 
 #[wasm_bindgen]
@@ -82,8 +85,12 @@ impl WorkTree {
             base: HexOid(base),
             start_ops,
         } = args.into_serde().unwrap();
-        let (tree, operations) = nano::WorkTree::new(replica_id, base, start_ops, Rc::new(git))
-            .map_err(|e| e.to_string())?;
+        let (tree, operations) = nano::WorkTree::new(
+            replica_id,
+            base,
+            start_ops.into_iter().map(|op| op.0),
+            Rc::new(git),
+        ).map_err(|e| e.to_string())?;
         Ok(WorkTreeNewResult {
             tree: Some(WorkTree(tree)),
             operations: Some(StreamToAsyncIterator::new(
@@ -92,6 +99,19 @@ impl WorkTree {
                     .map_err(|err| err.to_string()),
             )),
         })
+    }
+
+    pub fn new_text_file(&mut self) -> JsValue {
+        let (file_id, operation) = self.0.new_text_file();
+        JsValue::from_serde(&WorkTreeNewTextFileResult {
+            file_id: Base64(file_id),
+            operation: Base64(operation),
+        }).unwrap()
+    }
+
+    pub fn open_text_file(&mut self, file_id: JsValue) -> js_sys::Promise {
+        let Base64(file_id) = file_id.into_serde().unwrap();
+        self.0.open_text_file(file_id)
     }
 }
 
@@ -214,7 +234,7 @@ impl Serialize for HexOid {
 impl<'de> Deserialize<'de> for HexOid {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
-        D: Deserializer<'de>
+        D: Deserializer<'de>,
     {
         use serde::de::Error;
         let bytes = hex::decode(&String::deserialize(deserializer)?).map_err(Error::custom)?;
