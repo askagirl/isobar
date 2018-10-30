@@ -11,7 +11,7 @@ let nano: any;
 
 export async function init() {
   nano = await import("../dist/nano_js");
-  nano.StreamToAsyncIterator.prototype[Symbol.asyncIterator] = function () {
+  nano.StreamToAsyncIterator.prototype[Symbol.asyncIterator] = function() {
       return this;
   };
   return { WorkTree };
@@ -52,7 +52,12 @@ export class WorkTree {
     startOps: ReadonlyArray<Operation>,
     git: GitProvider
   ): [WorkTree, AsyncIterable<Operation>] {
-    const result = nano.WorkTree.new(new GitProviderWrapper(git), replicaId, base, startOps);
+    const result = nano.WorkTree.new(
+      new GitProviderWrapper(git),
+      replicaId,
+      base,
+      startOps
+    );
     return [new WorkTree(result.tree()), result.operations()];
   }
 
@@ -80,7 +85,7 @@ export class WorkTree {
     return this.tree.remove(path);
   }
 
-  entries(options?: { descendInto?: Path[], showDeleted?: boolean }) {
+  entries(options?: { descendInto?: Path[]; showDeleted?: boolean }): Entry[] {
     let descendInto = null;
     let showDeleted = false;
     if (options) {
@@ -91,7 +96,7 @@ export class WorkTree {
   }
 
   openTextFile(path: Path): Promise<BufferId> {
-    return this.tree.open_text_file(path)
+    return this.tree.open_text_file(path);
   }
 
   getText(bufferId: BufferId): string {
