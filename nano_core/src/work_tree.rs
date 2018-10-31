@@ -802,7 +802,7 @@ mod tests {
         fn new() -> Self {
             TestGitProvider {
                 commits: RefCell::new(HashMap::new()),
-                next_oid: RefCell:new(0),
+                next_oid: RefCell::new(0),
             }
         }
 
