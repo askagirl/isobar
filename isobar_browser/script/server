@@ -28,7 +28,7 @@ const compiler = webpack([
   },
   {
     mode: webpackMode,
-    taget: "webworker",
+    target: "webworker",
     entry: path.join(__dirname, "../src/worker.js"),
     output: {
       filename: "worker.js",
@@ -66,7 +66,7 @@ websocketServer.on("connection", async ws => {
         try {
           ws.send(incomingMessage);
         } catch (error) {
-          console.error("Error sending to web socket:", error)
+          console.error("Error sending to web socket:", error);
         }
         incomingMessage = null;
       }
@@ -88,7 +88,7 @@ websocketServer.on("connection", async ws => {
 });
 
 app.use(webpackDev(compiler, { publicPath: "/" }));
-app.use("/", express.static(path(__dirname, "../static")))
+app.use("/", express.static(path.join(__dirname, "../static")));
 server.listen(webServerPort, () => {
   console.log(`Using isobar server: ${isobarServerAddress}:${isobarServerPort}`);
   console.log("Listening for HTTP connections on port " + webServerPort);
