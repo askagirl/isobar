@@ -1199,7 +1199,7 @@ impl Operation {
 
         fn parent_to_flatbuf<'a, 'fbb>(
             parent: &'a Option<(FileId, Arc<OsString>)>,
-            builder: &mut FlatBufferBuilder<'fbb>
+            builder: &mut FlatBufferBuilder<'fbb>,
         ) -> (
             FileIdType,
             Option<WIPOffset<UnionWIPOffset>>,
@@ -1230,7 +1230,7 @@ impl Operation {
                     parent_to_flatbuf(parent, builder);
 
                 (
-                    Operation::InsertMetadata,
+                    OperationType::InsertMetadata,
                     InsertMetadata::create(
                         builder,
                         &InsertMetadataArgs {
@@ -1280,12 +1280,13 @@ impl Operation {
                 lamport_timestamp,
             } => {
                 let (file_id_type, file_id) = file_id.to_flatbuf(builder);
-                builder.start_vector::<WIPOffset<serialization::buffer::Operation>>(edits.len());
-                for edit in edits {
-                    let edit = edit.to_flatbuf(builder);
-                    builder.push(edit);
-                }
-                let edits = builder.end_vector(edits.len());
+
+                let edit_flatbufs = edits
+                    .iter()
+                    .map(|e| e.to_flatbuf(builder))
+                    .collect::<Vec<_>>();
+                let edits = builder.create_vector(&edit_flatbufs);
+
                 (
                     OperationType::EditText,
                     EditText::create(
@@ -1298,7 +1299,7 @@ impl Operation {
                             lamport_timestamp: Some(&lamport_timestamp.to_flatbuf()),
                         },
                     )
-                    .as_union_value()
+                    .as_union_value(),
                 )
             }
         }
