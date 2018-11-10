@@ -282,7 +282,7 @@ impl OperationEnvelope {
     }
 
     pub fn operation(&self) -> Vec<u8> {
-        bincode::serialize(&self.0).unwrap()
+        self.0.serialize()
     }
 }
 
@@ -453,6 +453,10 @@ impl JsValueExt for JsValue {
             .dyn_into::<js_sys::Uint8Array>()
             .map_err(|_| JsValue::from_str("Operation must be Uint8Array"))?;
         let mut bytes = Vec::with_capacity(js_bytes.byte_length() as usize);
-        js_bytes.for_each(&mut |byte)
+        js_bytes.for_each(&mut |byte, _, _| bytes.push(byte));
+
+        nano::Operation::deserialize(&bytes)
+            .ok_or("unknown operation type")
+            .map_js_err()
     }
 }
