@@ -14,7 +14,7 @@ use wasm_bindgen::{prelude::*, JsCast};
 use wasm_bindgen_futures::{future_to_promise, JsFuture};
 
 trait JsValueExt {
-    fn into_operation(self) -> Result<Option<nano::Operation>, JSValue>;
+    fn into_operation(self) -> Result<Option<nano::Operation>, JsValue>;
 }
 
 trait MapJsError<T> {
@@ -79,7 +79,7 @@ extern "C" {
     pub type AsyncIteratorWrapper;
 
     #[wasm_bindgen(method)]
-    fn this(this: &AsyncIteratorWrapper) -> js_sys::Promise;
+    fn next(this: &AsyncIteratorWrapper) -> js_sys::Promise;
 
     pub type GitProviderWrapper;
 
@@ -152,7 +152,7 @@ impl WorkTree {
 
     pub fn apply_ops(&mut self, js_ops: js_sys::Array) -> Result<StreamToAsyncIterator, JsValue> {
         let mut ops = Vec::new();
-        for js_ops in js_ops.values() {
+        for js_op in js_ops.values() {
             if let Some(op) = js_op?.into_operation()? {
                 ops.push(op);
             }
@@ -207,6 +207,13 @@ impl WorkTree {
                 .map(|buffer_id| JsValue::from_serde(&buffer_id).unwrap())
                 .map_err(|error| JsValue::from_str(&error.to_string())),
         )
+    }
+
+    pub fn path(&self, buffer_id: JsValue) -> Result<Option<String>, JsValue> {
+        Ok(self
+            .0
+            .path(buffer_id.into_serde().map_js_err()?)
+            .map(|path| path.to_string_lossy().into_owned()))
     }
 
     pub fn text(&self, buffer_id: JsValue) -> Result<JsValue, JsValue> {
@@ -337,7 +344,7 @@ impl StreamToAsyncIterator {
     fn new<E, S>(stream: S) -> Self
     where
         E: Serialize,
-        S: 'static + Stream<Item = T, Error = E>
+        S: 'static + Stream<Item = JsValue, Error = E>,
     {
         let js_value_stream = stream
             .map(|value| {
@@ -366,7 +373,7 @@ impl StreamToAsyncIterator {
                 Ok((next, rest)) => {
                     stream_rc.set(Some(rest));
                     Ok(next.unwrap_or_else(|| {
-                        let result = jsValue::from(js_sys::Object::new());
+                        let result = JsValue::from(js_sys::Object::new());
                         js_sys::Reflect::set(
                             &result,
                             &JsValue::from_str("done"),
@@ -429,7 +436,7 @@ impl nano::ChangeObserver for ChangeObserver {
             .collect::<Vec<_>>();
         ChangeObserver::text_changed(
             self,
-            JSValue::from_serde(&buffer_id).unwrap(),
+            JsValue::from_serde(&buffer_id).unwrap(),
             JsValue::from_serde(&changes).unwrap(),
         );
     }
