@@ -14,7 +14,7 @@ use wasm_bindgen::{prelude::*, JsCast};
 use wasm_bindgen_futures::{future_to_promise, JsFuture};
 
 trait JsValueExt {
-    fn into_operation(self) -> Result<Option<nano::Operation>, JSValue>;
+    fn into_operation(self) -> Result<Option<nano::Operation>, JsValue>;
 }
 
 trait MapJsError<T> {
@@ -46,7 +46,7 @@ pub struct WorkTreeNewResult {
 }
 
 #[wasm_bindgen]
-pub struct OperationEnvelope(nano::Operation);
+pub struct OperationEnvelope(nano::OperationEnvelope);
 
 #[derive(Copy, Clone, Serialize, Deserialize)]
 struct EditRange {
@@ -79,7 +79,7 @@ extern "C" {
     pub type AsyncIteratorWrapper;
 
     #[wasm_bindgen(method)]
-    fn this(this: &AsyncIteratorWrapper) -> js_sys::Promise;
+    fn next(this: &AsyncIteratorWrapper) -> js_sys::Promise;
 
     pub type GitProviderWrapper;
 
@@ -152,7 +152,7 @@ impl WorkTree {
 
     pub fn apply_ops(&mut self, js_ops: js_sys::Array) -> Result<StreamToAsyncIterator, JsValue> {
         let mut ops = Vec::new();
-        for js_ops in js_ops.values() {
+        for js_op in js_ops.values() {
             if let Some(op) = js_op?.into_operation()? {
                 ops.push(op);
             }
@@ -275,22 +275,27 @@ impl WorkTreeNewResult {
 
 #[wasm_bindgen]
 impl OperationEnvelope {
-    fn new(operation: nano::Operation) -> Self {
+    fn new(operation: nano::OperationEnvelope) -> Self {
         OperationEnvelope(operation)
     }
 
     #[wasm_bindgen(js_name = epochReplicaId)]
     pub fn epoch_replica_id(&self) -> JsValue {
-        JsValue::from_serde(&self.0.epoch_id().replica_id).unwrap()
+        JsValue::from_serde(&self.0.operation.epoch_id().replica_id).unwrap()
     }
 
     #[wasm_bindgen(js_name = epochTimestamp)]
     pub fn epoch_timestamp(&self) -> JsValue {
-        JsValue::from_serde(&self.0.epoch_id().value).unwrap()
+        JsValue::from_serde(&self.0.operation.epoch_id().value).unwrap()
+    }
+
+    #[wasm_bindgen(js_name = epochHead)]
+    pub fn epoch_head(&self) -> JsValue {
+        JsValue::from_serde(&self.0.epoch_head.map(|head| HexOid(head))).unwrap()
     }
 
     pub fn operation(&self) -> Vec<u8> {
-        self.0.serialize()
+        self.0.operation.serialize()
     }
 }
 
@@ -333,7 +338,7 @@ impl StreamToAsyncIterator {
     fn new<E, S>(stream: S) -> Self
     where
         E: Serialize,
-        S: 'static + Stream<Item = T, Error = E>
+        S: 'static + Stream<Item = JsValue, Error = E>
     {
         let js_value_stream = stream
             .map(|value| {
@@ -362,7 +367,7 @@ impl StreamToAsyncIterator {
                 Ok((next, rest)) => {
                     stream_rc.set(Some(rest));
                     Ok(next.unwrap_or_else(|| {
-                        let result = jsValue::from(js_sys::Object::new());
+                        let result = JsValue::from(js_sys::Object::new());
                         js_sys::Reflect::set(
                             &result,
                             &JsValue::from_str("done"),
@@ -425,7 +430,7 @@ impl nano::ChangeObserver for ChangeObserver {
             .collect::<Vec<_>>();
         ChangeObserver::text_changed(
             self,
-            JSValue::from_serde(&buffer_id).unwrap(),
+            JsValue::from_serde(&buffer_id).unwrap(),
             JsValue::from_serde(&changes).unwrap(),
         );
     }

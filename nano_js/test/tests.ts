@@ -190,10 +190,25 @@ suite("WorkTree", () => {
     ]);
   });
 
-  test("incomplete base oids", async () => {
+  test("an invalid base commit oid throws an error instead of crashing", async () => {
     assert.throws(() => {
-      const [tree, fixupOps] = WorkTree.create("12345678", [], new TestGitProvider());
-    }, /123456789/);
+      WorkTree.create("12345678", [], new TestGitProvider());
+    }, /12345678/);
+  });
+
+  test("the epoch head is available on operation envelopes", async () => {
+    const OID = "0".repeat(40);
+
+    const git = new TestGitProvider();
+    git.commit(OID, [{ depth: 1, name: "a", type: nano.FileType.Directory }]);
+
+    const [tree1] = WorkTree.create(null, [], git);
+    const envelope1 = tree1.createFile("x", nano.FileType.Text);
+    assert.strictEqual(envelope1.epochHead(), null);
+    const [envelope2] = await collect(tree1.reset(OID));
+    assert.strictEqual(envelope2.epochHead(), OID);
+    const envelope3 = tree1.createFile("y", nano.FileType.Text);
+    assert.strictEqual(envelope3.epochHead(), OID);
   });
 });
 
@@ -210,7 +225,7 @@ async function collect<T>(iterable: AsyncIterable<T>): Promise<T[]> {
 }
 
 async function collectOps(
-  ops: ReadonlyArray<nano.OperationEnvelope>
+  ops: AsyncIterable<nano.OperationEnvelope>
 ): Promise<nano.Operation[]> {
   const envelopes = await collect(ops);
   return envelopes.map(envelope => envelope.operation());
