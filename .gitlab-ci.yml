@@ -17,6 +17,8 @@ before_script:
     - apt-get update -yqq
     - apt-get install -yqq --no-install-recommends build-essential
     - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+    - export NVM_DIR="${XDG_CONFIG_HOME/:-$HOME/.}nvm"
+    - [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
     - nvm install v11
     - curl -o- -L https://yarnpkg.com/install.sh | bash
     - export PATH="$HOME/.yarn/bin:$PATH"
