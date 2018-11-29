@@ -33,7 +33,7 @@ pub struct WorkTree {
     observer: Option<Rc<ChangeObserver>>,
 }
 
-#[derive(Clone, Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub struct Version {
     epoch_id: epoch::Id,
     epoch_version: time::Global,
