@@ -20,14 +20,14 @@ import {
   Range,
   Tagged
 } from "./support";
-import { randomBytes } from "crypto"
+import { randomBytes } from "crypto";
 
 let nano: any;
 
 async function init() {
   if (!nano) {
     nano = await import("../dist/nano_js");
-    nano.StreamToAsyncIteartor.prototype[Symbol.asyncIterator] = function() {
+    nano.StreamToAsyncIterator.prototype[Symbol.asyncIterator] = function() {
       return this;
     };
   }
@@ -84,7 +84,7 @@ export class WorkTree {
   }
 
   private constructor(tree: any, observer: ChangeObserver) {
-    this.tree = tree
+    this.tree = tree;
     this.observer = observer;
   }
 
