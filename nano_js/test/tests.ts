@@ -239,11 +239,11 @@ suite("WorkTree", () => {
     assert(!tree1.hasObserved(tree2.version()));
     assert(!tree2.hasObserved(tree1.version()));
 
-    await collectOps(tree1.applyOps([op2.operation()]))
+    await collectOps(tree1.applyOps([op2.operation()]));
     assert(tree1.hasObserved(tree2.version()));
     await collectOps(tree2.applyOps([op1.operation()]));
     assert(tree2.hasObserved(tree1.version()));
-  })
+  });
 });
 
 type BaseEntry =
