@@ -10,7 +10,6 @@ export {
 } from "./support";
 import {
   BufferId,
-  Change,
   ChangeObserver,
   ChangeObserverCallback,
   CompositeDisposable,
@@ -19,28 +18,29 @@ import {
   FileType,
   Oid,
   Path,
-  Point,
   Range,
   Tagged
 } from "./support";
-import { randomBytes } from "crypto"
+import { randomBytes } from "crypto";
 
 let nano: any;
 
-export async function init() {
-  nano = await import("../dist/nano_js");
-  nano.StreamToAsyncIterator.prototype[Symbol.asyncIterator] = function() {
+async function init() {
+  if (!nano) {
+    nano = await import("../dist/nano_js");
+    nano.StreamToAsyncIterator.prototype[Symbol.asyncIterator] = function() {
       return this;
-  };
-  return { WorkTree };
+    };
+  }
 }
 
-export type Version = Tagged<string, "Version">;
+export type Version = Tagged<Uint8Array, "Version">;
 export type Operation = Tagged<Uint8Array, "Operation">;
 export type ReplicaId = Tagged<string, "ReplicaId">;
 export interface OperationEnvelope {
   epochTimestamp(): number;
   epochReplicaId(): ReplicaId;
+  epochHead(): null | Oid;
   operation(): Operation;
 }
 
@@ -66,11 +66,13 @@ export class WorkTree {
   private tree: any;
   private observer: ChangeObserver;
 
-  static create(
+  static async create(
     base: Oid | null,
     startOps: ReadonlyArray<Operation>,
     git: GitProvider
-  ): [WorkTree, AsyncIterable<OperationEnvelope>] {
+  ): Promise<[WorkTree, AsyncIterable<OperationEnvelope>]> {
+    await init();
+
     const observer = new ChangeObserver();
     const result = nano.WorkTree.new(
       new GitProviderWrapper(git),
@@ -83,8 +85,16 @@ export class WorkTree {
   }
 
   private constructor(tree: any, observer: ChangeObserver) {
-    this.tree = tree
+    this.tree = tree;
     this.observer = observer;
+  }
+
+  version(): Version {
+    return this.tree.version()
+  }
+
+  hasObserved(version: Version): boolean {
+    return this.tree.observed(version)
   }
 
   reset(base: Oid | null): AsyncIterable<OperationEnvelope> {

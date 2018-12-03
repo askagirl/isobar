@@ -26,7 +26,7 @@ export class GitProviderWrapper {
   private git: GitProvider;
 
   constructor(git: GitProvider) {
-      this.git = git
+    this.git = git;
   }
 
   baseEntries(oid: Oid): AsyncIteratorWrapper<BaseEntry> {
@@ -36,7 +36,7 @@ export class GitProviderWrapper {
   }
 
   baseText(oid: Oid, path: Path): Promise<string> {
-    return this.git.baseText(oid, path)
+    return this.git.baseText(oid, path);
   }
 }
 

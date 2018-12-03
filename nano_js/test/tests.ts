@@ -1,32 +1,38 @@
-import * as nano from "../src/index";
+import {
+  BaseEntry as NanoBaseEntry,
+  Change,
+  GitProvider,
+  FileStatus,
+  FileType,
+  Oid,
+  Operation,
+  OperationEnvelope,
+  Path,
+  Point,
+  WorkTree
+} from "../src/index";
 import * as assert from "assert";
 
 suite("WorkTree", () => {
-  let WorkTree: typeof nano.WorkTree;
-
-  suiteSetup(async () => {
-    ({ WorkTree } = await nano.init());
-  });
-
   test("basic API interaction", async () => {
     const OID_0 = "0".repeat(40);
     const OID_1 = "1".repeat(40);
 
     const git = new TestGitProvider();
     git.commit(OID_0, [
-      { depth: 1, name: "a", type: nano.FileType.Directory },
-      { depth: 2, name: "b", type: nano.FileType.Directory },
-      { depth: 3, name: "c", type: nano.FileType.Text, text: "oid0 base text" },
-      { depth: 3, name: "d", type: nano.FileType.Directory }
+      { depth: 1, name: "a", type: FileType.Directory },
+      { depth: 2, name: "b", type: FileType.Directory },
+      { depth: 3, name: "c", type: FileType.Text, text: "oid0 base text" },
+      { depth: 3, name: "d", type: FileType.Directory }
     ]);
     git.commit(OID_1, [
-      { depth: 1, name: "a", type: nano.FileType.Directory },
-      { depth: 2, name: "b", type: nano.FileType.Directory },
-      { depth: 3, name: "c", type: nano.FileType.Text, text: "oid1 base text" }
+      { depth: 1, name: "a", type: FileType.Directory },
+      { depth: 2, name: "b", type: FileType.Directory },
+      { depth: 3, name: "c", type: FileType.Text, text: "oid1 base text" }
     ]);
 
-    const [tree1, initOps1] = WorkTree.create(OID_0, [], git);
-    const [tree2, initOps2] = WorkTree.create(
+    const [tree1, initOps1] = await WorkTree.create(OID_0, [], git);
+    const [tree2, initOps2] = await WorkTree.create(
       OID_0,
       await collectOps(initOps1),
       git
@@ -35,8 +41,8 @@ suite("WorkTree", () => {
 
     const ops1 = [];
     const ops2 = [];
-    ops1.push(tree1.createFile("e", nano.FileType.Text).operation());
-    ops2.push(tree2.createFile("f", nano.FileType.Text).operation());
+    ops1.push(tree1.createFile("e", FileType.Text).operation());
+    ops2.push(tree2.createFile("f", FileType.Text).operation());
 
     await assert.rejects(() => tree2.openTextFile("e"));
 
@@ -52,7 +58,7 @@ suite("WorkTree", () => {
     assert.strictEqual(tree2BufferC.getPath(), "a/b/c");
     assert.strictEqual(tree2BufferC.getText(), "oid0 base text");
 
-    const tree1BufferChanges: nano.Change[] = [];
+    const tree1BufferChanges: Change[] = [];
     tree1BufferC.onChange(c => tree1BufferChanges.push(...c));
     ops1.push(
       tree1BufferC
@@ -67,7 +73,7 @@ suite("WorkTree", () => {
     );
     assert.strictEqual(tree1BufferC.getText(), "oid0-base-text");
 
-    const tree2BufferChanges: nano.Change[] = [];
+    const tree2BufferChanges: Change[] = [];
     tree2BufferC.onChange(c => tree2BufferChanges.push(...c));
     assert.deepStrictEqual(await collectOps(tree2.applyOps(ops1)), []);
     assert.strictEqual(tree1BufferC.getText(), "oid0-base-text");
@@ -78,8 +84,8 @@ suite("WorkTree", () => {
     ]);
     ops1.length = 0;
 
-    ops1.push(tree1.createFile("x", nano.FileType.Directory).operation());
-    ops1.push(tree1.createFile("x/y", nano.FileType.Directory).operation());
+    ops1.push(tree1.createFile("x", FileType.Directory).operation());
+    ops1.push(tree1.createFile("x/y", FileType.Directory).operation());
     ops1.push(tree1.rename("x", "a/b/x").operation());
     ops1.push(tree1.remove("a/b/d").operation());
     assert.deepStrictEqual(await collectOps(tree2.applyOps(ops1)), []);
@@ -91,26 +97,26 @@ suite("WorkTree", () => {
     assert.deepEqual(tree1.entries({ descendInto: [] }), [
       {
         depth: 1,
-        type: nano.FileType.Directory,
+        type: FileType.Directory,
         name: "a",
         path: "a",
-        status: nano.FileStatus.Unchanged,
+        status: FileStatus.Unchanged,
         visible: true
       },
       {
         depth: 1,
-        type: nano.FileType.Text,
+        type: FileType.Text,
         name: "e",
         path: "e",
-        status: nano.FileStatus.New,
+        status: FileStatus.New,
         visible: true
       },
       {
         depth: 1,
-        type: nano.FileType.Text,
+        type: FileType.Text,
         name: "f",
         path: "f",
-        status: nano.FileStatus.New,
+        status: FileStatus.New,
         visible: true
       }
     ]);
@@ -119,58 +125,58 @@ suite("WorkTree", () => {
       [
         {
           depth: 1,
-          type: nano.FileType.Directory,
+          type: FileType.Directory,
           name: "a",
           path: "a",
-          status: nano.FileStatus.Unchanged,
+          status: FileStatus.Unchanged,
           visible: true
         },
         {
           depth: 2,
-          type: nano.FileType.Directory,
+          type: FileType.Directory,
           name: "b",
           path: "a/b",
-          status: nano.FileStatus.Unchanged,
+          status: FileStatus.Unchanged,
           visible: true
         },
         {
           depth: 3,
-          type: nano.FileType.Text,
+          type: FileType.Text,
           name: "c",
           path: "a/b/c",
-          status: nano.FileStatus.Modified,
+          status: FileStatus.Modified,
           visible: true
         },
         {
           depth: 3,
-          type: nano.FileType.Directory,
+          type: FileType.Directory,
           name: "d",
           path: "a/b/d",
-          status: nano.FileStatus.Removed,
+          status: FileStatus.Removed,
           visible: false
         },
         {
           depth: 3,
-          type: nano.FileType.Directory,
+          type: FileType.Directory,
           name: "x",
           path: "a/b/x",
-          status: nano.FileStatus.New,
+          status: FileStatus.New,
           visible: true
         },
         {
           depth: 1,
-          type: nano.FileType.Text,
+          type: FileType.Text,
           name: "e",
           path: "e",
-          status: nano.FileStatus.New,
+          status: FileStatus.New,
           visible: true
         },
         {
           depth: 1,
-          type: nano.FileType.Text,
+          type: FileType.Text,
           name: "f",
           path: "f",
-          status: nano.FileStatus.New,
+          status: FileStatus.New,
           visible: true
         }
       ]
@@ -197,28 +203,67 @@ suite("WorkTree", () => {
     assert(tree1BufferC.getPath() == null);
   });
 
-  test("incomplete base oids", async () => {
-    assert.throws(() => {
-      const [tree, fixupOps] = WorkTree.create(
-        "12345678",
-        [],
-        new TestGitProvider()
-      );
-    }, /123456789/);
+  test("an invalid base commit oid throws an error instead of crashing", async () => {
+    assert.rejects(
+      () => WorkTree.create("12345678", [], new TestGitProvider()),
+      /12345678/
+    );
+  });
+
+  test("the epoch head is available on operation envelopes", async () => {
+    const OID = "0".repeat(40);
+
+    const git = new TestGitProvider();
+    git.commit(OID, [{ depth: 1, name: "a", type: FileType.Directory }]);
+
+    const [tree1] = await WorkTree.create(null, [], git);
+    const envelope1 = tree1.createFile("x", FileType.Text);
+    assert.strictEqual(envelope1.epochHead(), null);
+    const [envelope2] = await collect(tree1.reset(OID));
+    assert.strictEqual(envelope2.epochHead(), OID);
+    const envelope3 = tree1.createFile("y", FileType.Text);
+    assert.strictEqual(envelope3.epochHead(), OID);
+  });
+
+  test("versions", async () => {
+    const OID = "0".repeat(40);
+
+    const git = new TestGitProvider();
+    git.commit(OID, [{ depth: 1, name: "a", type: FileType.Directory }]);
+
+    const [tree1, initOps1] = await WorkTree.create(OID, [], git);
+    const [tree2, initOps2] = await WorkTree.create(
+      OID,
+      await collectOps(initOps1),
+      git
+    );
+    assert.deepEqual(await collectOps(initOps2), []);
+    assert(tree1.hasObserved(tree2.version()));
+    assert(tree2.hasObserved(tree1.version()));
+
+    let op1 = tree1.createFile("a/b.txt", FileType.Text);
+    let op2 = tree2.createFile("a/c.txt", FileType.Text);
+    assert(!tree1.hasObserved(tree2.version()));
+    assert(!tree2.hasObserved(tree1.version()));
+
+    await collectOps(tree1.applyOps([op2.operation()]));
+    assert(tree1.hasObserved(tree2.version()));
+    await collectOps(tree2.applyOps([op1.operation()]));
+    assert(tree2.hasObserved(tree1.version()));
   });
 
   test("buffer disposal", async () => {
     const OID = "0".repeat(40);
     const git = new TestGitProvider();
     git.commit(OID, [
-      { depth: 1, name: "a", type: nano.FileType.Directory },
-      { depth: 2, name: "b", type: nano.FileType.Directory },
-      { depth: 3, name: "c", type: nano.FileType.Text, text: "oid0 base text" },
-      { depth: 4, name: "d", type: nano.FileType.Directory }
+      { depth: 1, name: "a", type: FileType.Directory },
+      { depth: 2, name: "b", type: FileType.Directory },
+      { depth: 3, name: "c", type: FileType.Text, text: "oid0 base text" },
+      { depth: 4, name: "d", type: FileType.Directory }
     ]);
 
-    const [tree1, initOps1] = WorkTree.create(OID, [], git);
-    const [tree2, initOps2] = WorkTree.create(
+    const [tree1, initOps1] = await WorkTree.create(OID, [], git);
+    const [tree2, initOps2] = await WorkTree.create(
       OID,
       await collectOps(initOps1),
       git
@@ -227,7 +272,7 @@ suite("WorkTree", () => {
 
     const buffer1 = await tree1.openTextFile("a/b/c");
     let buffer1ChangeCount = 0;
-    buffer1.onChange(changes => buffer1ChangeCount++);
+    buffer1.onChange(_ => buffer1ChangeCount++);
 
     const buffer2 = await tree2.openTextFile("a/b/c");
     tree1.applyOps([
@@ -244,8 +289,8 @@ suite("WorkTree", () => {
 });
 
 type BaseEntry =
-  | nano.BaseEntry & { type: nano.FileType.Directory }
-  | nano.BaseEntry & { type: nano.FileType.Text; text: string };
+  | NanoBaseEntry & { type: FileType.Directory }
+  | NanoBaseEntry & { type: FileType.Text; text: string };
 
 async function collect<T>(iterable: AsyncIterable<T>): Promise<T[]> {
   const items = [];
@@ -256,26 +301,26 @@ async function collect<T>(iterable: AsyncIterable<T>): Promise<T[]> {
 }
 
 async function collectOps(
-  ops: ReadonlyArray<nano.OperationEnvelope>
-): Promise<nano.Operation[]> {
+  ops: AsyncIterable<OperationEnvelope>
+): Promise<Operation[]> {
   const envelopes = await collect(ops);
   return envelopes.map(envelope => envelope.operation());
 }
 
-function point(row: number, column: number): nano.Point {
+function point(row: number, column: number): Point {
   return { row, column };
 }
 
-class TestGitProvider implements nano.GitProvider {
-  private entries: Map<nano.Oid, ReadonlyArray<nano.BaseEntry>>;
-  private text: Map<nano.Oid, Map<nano.Path, string>>;
+class TestGitProvider implements GitProvider {
+  private entries: Map<Oid, ReadonlyArray<BaseEntry>>;
+  private text: Map<Oid, Map<Path, string>>;
 
   constructor() {
     this.entries = new Map();
     this.text = new Map();
   }
 
-  commit(oid: nano.Oid, entries: ReadonlyArray<BaseEntry>) {
+  commit(oid: Oid, entries: ReadonlyArray<BaseEntry>) {
     this.entries.set(oid, entries);
 
     const textByPath = new Map();
@@ -283,14 +328,14 @@ class TestGitProvider implements nano.GitProvider {
     for (const entry of entries) {
       path.length = entry.depth - 1;
       path.push(entry.name);
-      if (entry.type === nano.FileType.Text) {
+      if (entry.type === FileType.Text) {
         textByPath.set(path.join("/"), entry.text);
       }
     }
     this.text.set(oid, textByPath);
   }
 
-  async *baseEntries(oid: nano.Oid): AsyncIterable<nano.BaseEntry> {
+  async *baseEntries(oid: Oid): AsyncIterable<BaseEntry> {
     const entries = this.entries.get(oid);
     if (entries) {
       for (const entry of entries) {
@@ -301,7 +346,7 @@ class TestGitProvider implements nano.GitProvider {
     }
   }
 
-  async baseText(oid: nano.Oid, path: nano.Path): Promise<string> {
+  async baseText(oid: Oid, path: Path): Promise<string> {
     const textByPath = this.text.get(oid);
     if (textByPath != null) {
       const text = textByPath.get(path);
