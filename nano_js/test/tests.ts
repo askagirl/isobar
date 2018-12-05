@@ -12,7 +12,7 @@ import {
   WorkTree
 } from "../src/index";
 import * as assert from "assert";
-import * as uuid from 'uuid/v4'
+import * as uuid from "uuid/v4";
 
 suite("WorkTree", () => {
   test("basic API interaction", async () => {
@@ -277,7 +277,7 @@ suite("WorkTree", () => {
       { depth: 1, name: "a", type: FileType.Directory },
       { depth: 2, name: "b", type: FileType.Directory },
       { depth: 3, name: "c", type: FileType.Text, text: "oid0 base text" },
-      { depth: 4, name: "d", type: FileType.Directory }
+      { depth: 3, name: "d", type: FileType.Directory }
     ]);
 
     const [tree1, initOps1] = await WorkTree.create(uuid(), OID, [], git);
