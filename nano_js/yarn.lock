@@ -17,6 +17,13 @@
   resolved "https://registry.npmjs.org/@types/node/-/node-10.12.0.tgz#ea6dcbddbc5b584c83f06c60e82736d8fbb0c235"
   integrity sha512-3TUHC3jsBAB7qVRGxT6lWyYo2v96BMmD2PTcl47H25Lu7UXtFH/2qqmKiVrnel6Ne//0TFYf6uvNX+HW2FRkLQ==
 
+"@types/uuid-parse@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.npmjs.org/@types/uuid-parse/-/uuid-parse-1.0.0.tgz#615a1a992bacaa2f50c382a4bc17fe5349d50e36"
+  integrity sha512-iptjRzo+N2P5MWRIZSe1iTfi6jV5WdpuC5XGZZw04LSWQ0C9QTicdpHUt93myV9Tgf0wK+E4O8RE+wq+V1zIkA==
+  dependencies:
+    "@types/node" "*"
+
 "@types/uuid@^3.4.4":
   version "3.4.4"
   resolved "https://registry.npmjs.org/@types/uuid/-/uuid-3.4.4.tgz#7af69360fa65ef0decb41fd150bf4ca5c0cefdf5"
@@ -2752,6 +2759,11 @@ util@^0.10.3:
   integrity sha512-0Pm9hTQ3se5ll1XihRic3FDIku70C+iHUdT/W926rSgHV5QgXsYbKZN8MSC3tJtSkhuROzvsQjAaFENRXr+19A==
   dependencies:
     inherits "2.0.3"
+
+uuid-parse@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmjs.org/uuid-parse/-/uuid-parse-1.0.0.tgz#f4657717624b0e4b88af36f98d89589a5bbee569"
+  integrity sha1-9GV3F2JLDkuIrzb5jYlYmlu+5Wk=
 
 uuid@^3.3.2:
   version "3.3.2"
