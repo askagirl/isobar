@@ -1,0 +1,48 @@
+variables:
+  cargo: '$HOME/.cargo/env'
+
+jobs:
+  - job: Linux
+    pool:
+      vmImage: ubuntu-16.04
+    steps:
+      - script: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libsecret-1-dev xvfb fakeroot dpkg rpm xz-utils xorriso zsync libxss1 libgconf2-4 libgtk-3-0
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '11.x'
+        displayName: Install Node
+      - task: geeklearningio.gl-vsts-tasks-yarn.yarn-installer-task.YarnInstaller@2
+        inputs:
+          versionSpec: '1.12.3'
+        displayName: Install Yarn
+      - script: |
+          curl https://sh.rustup.rs -sSf | sh -s -- -y
+          source $HOME/.cargo/env
+          rustup install nightly
+          rustup default nightly
+        displayName: Install Rust Nightly
+      - script: |
+          source $HOME/.cargo/env
+          ./script/cibuild
+        name: Build
+
+  - job: macOS
+    pool:
+      vmImage: xcode9-macos10.13
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '11.x'
+        displayName: Install Node
+      - script: |
+          curl https://sh.rustup.rs -sSf | sh -s -- -y
+          source $HOME/.cargo/env
+          rustup install nightly
+          rustup default nightly
+        displayName: Install Rust Nightly
+      - script: |
+          source $HOME/.cargo/env
+          ./script/cibuild
+        name: Build
