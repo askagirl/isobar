@@ -354,7 +354,7 @@ suite("WorkTree", () => {
       async baseText(): Promise<string> {
         await 0;
         throw new Error("baseText");
-      } 
+      }
     };
     const OID = "0".repeat(40);
     const [, initOps] = await WorkTree.create(uuid(), OID, [], git);
@@ -369,7 +369,7 @@ suite("WorkTree", () => {
       },
       async baseText(): Promise<string> {
         await 0;
-        throw {};
+        throw new Error("baseText");
       }
     };
     const OID = "0".repeat(40);
