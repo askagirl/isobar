@@ -12,7 +12,7 @@ jobs:
       - checkout
 
       - run:
-        name: Build
-        command: ./script/cibuild
+          name: Build
+          command: ./script/cibuild
 
 
